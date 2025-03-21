@@ -8,12 +8,27 @@ namespace Ambev.DeveloperEvaluation.Domain.Repositories;
 public interface IUserRepository
 {
     /// <summary>
-    /// Creates a new user in the repository
+    /// Create a new user in the repository
     /// </summary>
     /// <param name="user">The user to create</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>The created user</returns>
     Task<User> CreateAsync(User user, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Update a existing user in the repository
+    /// </summary>
+    /// <param name="user">The user to update</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>The updated user</returns>
+    Task<User> UpdatedAsync(User user, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Retrieves users
+    /// </summary>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>The user if found, null otherwise</returns>
+    Task<List<User>> GetByPaginationAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Retrieves a user by their unique identifier

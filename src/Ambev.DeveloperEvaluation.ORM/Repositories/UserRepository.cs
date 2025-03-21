@@ -21,7 +21,7 @@ public class UserRepository : IUserRepository
     }
 
     /// <summary>
-    /// Creates a new user in the database
+    /// Create a new user in the database
     /// </summary>
     /// <param name="user">The user to create</param>
     /// <param name="cancellationToken">Cancellation token</param>
@@ -30,8 +30,31 @@ public class UserRepository : IUserRepository
     {
         await _context.Users.AddAsync(user, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
+        
         return user;
     }
+
+    /// <summary>
+    /// Update an existing user in the database
+    /// </summary>
+    /// <param name="user">The user to update</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>The updated user</returns>
+    public async Task<User> UpdatedAsync(User user, CancellationToken cancellationToken = default)
+    {
+        _context.Users.Update(user);
+        await _context.SaveChangesAsync(cancellationToken);
+
+        return user;
+    }
+
+    /// <summary>
+    /// Retrieves users
+    /// </summary>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>The list of users</returns>
+    public Task<List<User>> GetByPaginationAsync(CancellationToken cancellationToken = default)
+        => _context.Users.AsNoTracking().ToListAsync(cancellationToken);
 
     /// <summary>
     /// Retrieves a user by their unique identifier
@@ -39,10 +62,8 @@ public class UserRepository : IUserRepository
     /// <param name="id">The unique identifier of the user</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>The user if found, null otherwise</returns>
-    public async Task<User?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
-    {
-        return await _context.Users.FirstOrDefaultAsync(o=> o.Id == id, cancellationToken);
-    }
+    public Task<User?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+        => _context.Users.AsNoTracking().FirstOrDefaultAsync(o=> o.Id == id, cancellationToken);
 
     /// <summary>
     /// Retrieves a user by their email address
@@ -50,11 +71,8 @@ public class UserRepository : IUserRepository
     /// <param name="email">The email address to search for</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>The user if found, null otherwise</returns>
-    public async Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default)
-    {
-        return await _context.Users
-            .FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
-    }
+    public Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default)
+        => _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
 
     /// <summary>
     /// Deletes a user from the database
@@ -70,6 +88,7 @@ public class UserRepository : IUserRepository
 
         _context.Users.Remove(user);
         await _context.SaveChangesAsync(cancellationToken);
+        
         return true;
     }
 }

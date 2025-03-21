@@ -13,6 +13,8 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities;
 /// </summary>
 public class User : BaseEntity, IUser
 {
+    public ICollection<UserAddress> Addresses { get; set; }
+
     /// <summary>
     /// Gets the user's full name.
     /// Must not be null or empty and should contain both first and last names.
@@ -51,16 +53,6 @@ public class User : BaseEntity, IUser
     public UserStatus Status { get; set; }
 
     /// <summary>
-    /// Gets the date and time when the user was created.
-    /// </summary>
-    public DateTime CreatedAt { get; set; }
-
-    /// <summary>
-    /// Gets the date and time of the last update to the user's information.
-    /// </summary>
-    public DateTime? UpdatedAt { get; set; }
-
-    /// <summary>
     /// Gets the unique identifier of the user.
     /// </summary>
     /// <returns>The user's ID as a string.</returns>
@@ -77,14 +69,6 @@ public class User : BaseEntity, IUser
     /// </summary>
     /// <returns>The user's role as a string.</returns>
     string IUser.Role => Role.ToString();
-
-    /// <summary>
-    /// Initializes a new instance of the User class.
-    /// </summary>
-    public User()
-    {
-        CreatedAt = DateTime.UtcNow;
-    }
 
     /// <summary>
     /// Performs validation of the user entity using the UserValidator rules.

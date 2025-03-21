@@ -18,6 +18,12 @@ public class DefaultContext : DbContext
     {
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         CustomPluralizationConvention.Configure(modelBuilder);
+
+        modelBuilder.Entity<User>()
+            .HasMany(u => u.Addresses)
+            .WithOne(a => a.User)
+            .HasForeignKey(a => a.UserId);
+
         base.OnModelCreating(modelBuilder);
     }
 

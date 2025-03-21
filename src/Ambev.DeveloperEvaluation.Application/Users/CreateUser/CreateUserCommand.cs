@@ -20,36 +20,14 @@ namespace Ambev.DeveloperEvaluation.Application.Users.CreateUser;
 /// </remarks>
 public class CreateUserCommand : IRequest<CreateUserResult>
 {
-    /// <summary>
-    /// Gets or sets the username of the user to be created.
-    /// </summary>
-    public string Username { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Gets or sets the password for the user.
-    /// </summary>
-    public string Password { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Gets or sets the phone number for the user.
-    /// </summary>
-    public string Phone { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Gets or sets the email address for the user.
-    /// </summary>
-    public string Email { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Gets or sets the status of the user.
-    /// </summary>
+    public string Email { get; set; }
+    public string Username { get; set; }
+    public string Password { get; set; }
+    public CreateUserName Name { get; set; }
+    public CreateUserAddress Address { get; set; }
+    public string Phone { get; set; }
     public UserStatus Status { get; set; }
-
-    /// <summary>
-    /// Gets or sets the role of the user.
-    /// </summary>
     public UserRole Role { get; set; }
-
 
     public ValidationResultDetail Validate()
     {
@@ -61,4 +39,25 @@ public class CreateUserCommand : IRequest<CreateUserResult>
             Errors = result.Errors.Select(o => (ValidationErrorDetail)o)
         };
     }
+}
+
+public class CreateUserName
+{
+    public string Firstname { get; set; }
+    public string Lastname { get; set; }
+}
+
+public class CreateUserAddress
+{
+    public string City { get; set; }
+    public string Street { get; set; }
+    public string Number { get; set; }
+    public string Zipcode { get; set; }
+    public CreateUserAddressGeolocation? Geolocation { get; set; }
+}
+
+public class CreateUserAddressGeolocation
+{
+    public decimal Lat { get; set; }
+    public decimal Long { get; set; }
 }
