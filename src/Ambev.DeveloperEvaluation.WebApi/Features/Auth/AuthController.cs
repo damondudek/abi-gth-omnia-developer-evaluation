@@ -46,14 +46,21 @@ public class AuthController : BaseController
         if (!validationResult.IsValid)
             return BadRequest(validationResult.Errors);
 
-        var command = _mapper.Map<AuthenticateUserCommand>(request);
-        var response = await _mediator.Send(command, cancellationToken);
-
-        return Ok(new ApiResponseWithData<AuthenticateUserResponse>
+        try
         {
-            Success = true,
-            Message = "User authenticated successfully",
-            Data = _mapper.Map<AuthenticateUserResponse>(response)
-        });
+            var command = _mapper.Map<AuthenticateUserCommand>(request);
+            var response = await _mediator.Send(command, cancellationToken);
+            var data = _mapper.Map<AuthenticateUserResponse>(response);
+
+            return Ok(data, "User authenticated successfully");
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return Unauthorized(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 }

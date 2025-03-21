@@ -4,6 +4,7 @@ using FluentValidation;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Common.Security;
+using Ambev.DeveloperEvaluation.Application.Users.Common;
 
 namespace Ambev.DeveloperEvaluation.Application.Users.UpdateUser;
 
@@ -43,9 +44,9 @@ public class UpdateUserHandler : IRequestHandler<UpdateUserCommand, UpdateUserRe
         //if (!validationResult.IsValid)
         //    throw new ValidationException(validationResult.Errors);
 
-        var existingUser = await _userRepository.GetByIdAsync(command.Id, cancellationToken);
-        if (existingUser is null)
-            throw new InvalidOperationException($"User with id {command.Id} does not exists");
+        // apply ioc
+        var userRules = new UserRules(_userRepository);
+        await userRules.CheckRulesToUpdate(command, cancellationToken);
 
         var user = _mapper.Map<User>(command);
         var updatedUser = await _userRepository.UpdatedAsync(user, cancellationToken);

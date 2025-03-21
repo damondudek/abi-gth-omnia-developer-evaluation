@@ -9,3 +9,7 @@ dotnet ef migrations add NewMigration --project ../Ambev.DeveloperEvaluation.ORM
 
 to update database
 dotnet ef database update --project ../Ambev.DeveloperEvaluation.ORM
+
+
+# doubts
+## the documentations says that we need to do the authentication using username, and not email

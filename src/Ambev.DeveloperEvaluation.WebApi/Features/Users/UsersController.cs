@@ -11,12 +11,14 @@ using Ambev.DeveloperEvaluation.Application.Users.DeleteUser;
 using Ambev.DeveloperEvaluation.Application.Users.UpdateUser;
 using Ambev.DeveloperEvaluation.WebApi.Features.Users.UpdateUser;
 using Ambev.DeveloperEvaluation.Application.Users.GetUsers;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Users;
 
 /// <summary>
 /// Controller for managing user operations
 /// </summary>
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class UsersController : BaseController
@@ -41,6 +43,7 @@ public class UsersController : BaseController
     /// <param name="request">The user creation request</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>The created user details</returns>
+    [AllowAnonymous]
     [HttpPost]
     [ProducesResponseType(typeof(ApiResponseWithData<CreateUserResponse>), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
