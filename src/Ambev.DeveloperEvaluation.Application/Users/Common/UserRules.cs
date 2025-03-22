@@ -25,7 +25,9 @@ namespace Ambev.DeveloperEvaluation.Application.Users.Common
             if (existingUser is null)
                 throw new InvalidOperationException($"User with id {command.Id} does not exists");
 
-            await CheckIsUserExistsByEmail(command.Email, cancellationToken);
+            if (existingUser.Email != command.Email)
+                await CheckIsUserExistsByEmail(command.Email, cancellationToken);
+
             await CheckIsUserExistsByUsername(command.Email, cancellationToken);
         }
 

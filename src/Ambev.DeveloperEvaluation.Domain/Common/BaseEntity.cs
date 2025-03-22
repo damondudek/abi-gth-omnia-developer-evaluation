@@ -4,11 +4,6 @@ namespace Ambev.DeveloperEvaluation.Domain.Common;
 
 public class BaseEntity : IComparable<BaseEntity>
 {
-    public BaseEntity()
-    {
-        CreatedAt = DateTime.UtcNow;
-    }
-
     public Guid Id { get; set; }
 
     /// <summary>

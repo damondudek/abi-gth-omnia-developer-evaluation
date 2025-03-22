@@ -13,7 +13,7 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities;
 /// </summary>
 public class User : BaseEntity, IUser
 {
-    public ICollection<UserAddress> Addresses { get; set; }
+    //public ICollection<UserAddress> Addresses { get; set; }
 
     /// <summary>
     /// Gets the user's full name.
@@ -94,7 +94,7 @@ public class User : BaseEntity, IUser
         return new ValidationResultDetail
         {
             IsValid = result.IsValid,
-            Errors = result.Errors.Select(o => (ValidationErrorDetail)o)
+            Errors = result.Errors.Select(error => (ValidationErrorDetail)error)
         };
     }
 

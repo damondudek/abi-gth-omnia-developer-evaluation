@@ -32,6 +32,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Features\Products\GetProduct\" />
+    <Folder Include="Features\Products\DeleteProduct\" />
+    <Folder Include="Features\Products\GetProductCategory\" />
+    <Folder Include="Features\Products\UpdateProduct\" />
     <Folder Include="Features\Users\DeleteUser\" />
   </ItemGroup>
 

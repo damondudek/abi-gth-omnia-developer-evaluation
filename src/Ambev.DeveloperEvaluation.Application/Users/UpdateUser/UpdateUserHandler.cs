@@ -49,7 +49,7 @@ public class UpdateUserHandler : IRequestHandler<UpdateUserCommand, UpdateUserRe
         await userRules.CheckRulesToUpdate(command, cancellationToken);
 
         var user = _mapper.Map<User>(command);
-        var updatedUser = await _userRepository.UpdatedAsync(user, cancellationToken);
+        var updatedUser = await _userRepository.UpdateAsync(user, cancellationToken);
         var result = _mapper.Map<UpdateUserResult>(updatedUser);
 
         return result;

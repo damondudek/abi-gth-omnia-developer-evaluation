@@ -5,48 +5,20 @@ using Microsoft.EntityFrameworkCore;
 namespace Ambev.DeveloperEvaluation.ORM.Repositories;
 
 /// <summary>
-/// Implementation of IUserRepository using Entity Framework Core
+/// Implementation of IUserRepository for User-specific operations
 /// </summary>
-public class UserRepository : IUserRepository
+public class UserRepository : BaseRepository<User, DefaultContext>, IUserRepository
 {
-    private readonly DefaultContext _context;
-
-    /// <summary>
-    /// Initializes a new instance of UserRepository
-    /// </summary>
-    /// <param name="context">The database context</param>
-    public UserRepository(DefaultContext context)
+    public UserRepository(DefaultContext context) : base(context)
     {
-        _context = context;
     }
 
     /// <summary>
-    /// Create a new user in the database
+    /// Retrieves all entities from the database
     /// </summary>
-    /// <param name="user">The user to create</param>
-    /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>The created user</returns>
-    public async Task<User> CreateAsync(User user, CancellationToken cancellationToken = default)
-    {
-        await _context.Users.AddAsync(user, cancellationToken);
-        await _context.SaveChangesAsync(cancellationToken);
-        
-        return user;
-    }
+    public Task<List<User>> GetAllAsync(CancellationToken cancellationToken = default)
+        => _context.Users.AsNoTracking().ToListAsync(cancellationToken);
 
-    /// <summary>
-    /// Update an existing user in the database
-    /// </summary>
-    /// <param name="user">The user to update</param>
-    /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>The updated user</returns>
-    public async Task<User> UpdatedAsync(User user, CancellationToken cancellationToken = default)
-    {
-        _context.Users.Update(user);
-        await _context.SaveChangesAsync(cancellationToken);
-
-        return user;
-    }
 
     /// <summary>
     /// Retrieves users
@@ -57,47 +29,18 @@ public class UserRepository : IUserRepository
         => _context.Users.AsNoTracking().ToListAsync(cancellationToken);
 
     /// <summary>
-    /// Retrieves a user by their unique identifier
-    /// </summary>
-    /// <param name="id">The unique identifier of the user</param>
-    /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>The user if found, null otherwise</returns>
-    public Task<User?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
-        => _context.Users.AsNoTracking().FirstOrDefaultAsync(o=> o.Id == id, cancellationToken);
-
-    /// <summary>
     /// Retrieves a user by their email address
     /// </summary>
-    /// <param name="email">The email address to search for</param>
-    /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>The user if found, null otherwise</returns>
     public Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default)
-        => _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
+    {
+        return _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
+    }
 
     /// <summary>
     /// Retrieves a user by their username
     /// </summary>
-    /// <param name="email">The username to search for</param>
-    /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>The user if found, null otherwise</returns>
     public Task<User?> GetByUsernameAsync(string username, CancellationToken cancellationToken = default)
-        => _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Username == username, cancellationToken);
-
-    /// <summary>
-    /// Deletes a user from the database
-    /// </summary>
-    /// <param name="id">The unique identifier of the user to delete</param>
-    /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>True if the user was deleted, false if not found</returns>
-    public async Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var user = await GetByIdAsync(id, cancellationToken);
-        if (user == null)
-            return false;
-
-        _context.Users.Remove(user);
-        await _context.SaveChangesAsync(cancellationToken);
-        
-        return true;
+        return _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Username == username, cancellationToken);
     }
 }
