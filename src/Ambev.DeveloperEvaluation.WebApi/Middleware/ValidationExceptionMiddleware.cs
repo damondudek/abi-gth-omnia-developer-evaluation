@@ -1,6 +1,8 @@
-﻿using Ambev.DeveloperEvaluation.Common.Validation;
+﻿using Ambev.DeveloperEvaluation.Application.Errors;
+using Ambev.DeveloperEvaluation.Common.Validation;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using FluentValidation;
+using System.Collections;
 using System.Text.Json;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Middleware
@@ -31,12 +33,12 @@ namespace Ambev.DeveloperEvaluation.WebApi.Middleware
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = StatusCodes.Status400BadRequest;
 
-            var response = new ApiResponse
+            var response = new ApiErrorResponse<IEnumerable>
             {
-                Success = false,
-                Message = "Validation Failed",
-                Errors = exception.Errors
-                    .Select(error => (ValidationErrorDetail)error)
+                Type = ErrorType.ValidationError,
+                Error = "Invalid input data",
+                Details = exception.Errors
+                    .Select(error => error.ErrorMessage)
             };
 
             var jsonOptions = new JsonSerializerOptions
