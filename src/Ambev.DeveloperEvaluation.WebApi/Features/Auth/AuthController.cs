@@ -4,6 +4,7 @@ using AutoMapper;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Auth.AuthenticateUserFeature;
 using Ambev.DeveloperEvaluation.Application.Auth.AuthenticateUser;
+using FluentValidation;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Auth;
 
@@ -42,9 +43,9 @@ public class AuthController : BaseController
     {
         var validator = new AuthenticateUserRequestValidator();
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
-
+        
         if (!validationResult.IsValid)
-            return BadRequest(validationResult.Errors);
+            throw new ValidationException(validationResult.Errors);
 
         try
         {
@@ -56,7 +57,7 @@ public class AuthController : BaseController
         }
         catch (UnauthorizedAccessException ex)
         {
-            return Unauthorized(ex.Message);
+            return Unauthorized("Invalid Credentials", ex.Message);
         }
         catch (Exception ex)
         {

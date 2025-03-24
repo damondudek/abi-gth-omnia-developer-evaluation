@@ -25,7 +25,7 @@ namespace Ambev.DeveloperEvaluation.Application.Auth.AuthenticateUser
         {
             var user = await _userRepository.GetByUsernameAsync(request.Username, cancellationToken);
             if (user is null || !_passwordHasher.VerifyPassword(request.Password, user.Password))
-                throw new UnauthorizedAccessException("Invalid credentials");
+                throw new UnauthorizedAccessException("Invalid credentials. Please try again with different credentials");
 
             var activeUserSpec = new ActiveUserSpecification();
             if (!activeUserSpec.IsSatisfiedBy(user))

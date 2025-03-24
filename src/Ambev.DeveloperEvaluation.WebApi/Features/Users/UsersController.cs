@@ -129,12 +129,19 @@ public class UsersController : BaseController
         if (!validationResult.IsValid)
             return BadRequest(validationResult.Errors);
 
-        var requestCommand = _mapper.Map<GetUserCommand>(request.Id);
-        var responseCommand = await _mediator.Send(requestCommand, cancellationToken);
-        var response = _mapper.Map<GetUserResponse>(responseCommand);
-        var apiResponse = new ApiResponseWithData<GetUserResponse>(response, UsersMessage.UserRetrievedSuccess);
+        try
+        {
+            var requestCommand = _mapper.Map<GetUserCommand>(request.Id);
+            var responseCommand = await _mediator.Send(requestCommand, cancellationToken);
+            var response = _mapper.Map<GetUserResponse>(responseCommand);
+            var apiResponse = new ApiResponseWithData<GetUserResponse>(response, UsersMessage.UserRetrievedSuccess);
 
-        return Ok(apiResponse);
+            return Ok(apiResponse);
+
+        } catch (KeyNotFoundException ex)
+        {
+            return NotFound(UsersMessage.UserNotFound, ex.Message);
+        }
     }
 
     /// <summary>

@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Ambev.DeveloperEvaluation.Application.Errors;
+using Ambev.DeveloperEvaluation.WebApi.Features.Users;
+using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Common;
@@ -22,8 +24,21 @@ public class BaseController : ControllerBase
     protected IActionResult BadRequest(string message) =>
         base.BadRequest(new ApiResponse(message, false));
 
-    protected IActionResult NotFound(string message = "Resource not found") =>
-        base.NotFound(new ApiResponse(message, false));
+    protected IActionResult NotFound(string error, string detail, string type = ErrorType.ResourceNotFound) =>
+        base.NotFound(new
+        {
+            type,
+            error,
+            detail
+        });
+
+    protected IActionResult Unauthorized(string error, string detail, string type = ErrorType.AuthenticationError) =>
+        base.NotFound(new
+        {
+            type,
+            error,
+            detail
+        });
 
     protected IActionResult OkPaginated<T>(PaginatedList<T> pagedList, string message = "") =>
             Ok(new PaginatedResponse<T>
