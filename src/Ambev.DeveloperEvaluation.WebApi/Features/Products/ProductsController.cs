@@ -1,4 +1,5 @@
 ﻿using Ambev.DeveloperEvaluation.Application.Products.CreateProduct;
+using Ambev.DeveloperEvaluation.Application.Products.GetProductCategories;
 using Ambev.DeveloperEvaluation.Domain.Models;
 using Ambev.DeveloperEvaluation.WebApi.Features.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.CreateProduct;
@@ -55,5 +56,20 @@ public class ProductsController : BaseController
         var apiResponse = new ApiDataResponse<CreateProductResponse>(response, ProductsMessage.ProductCreatedSuccess);
 
         return Created(string.Empty, apiResponse);
+    }
+
+    /// <summary>
+    /// Retrieves product categories
+    /// </summary>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>The product categories</returns>
+    [HttpGet("categories")]
+    [ProducesResponseType(typeof(List<string>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetUsers(CancellationToken cancellationToken)
+    {
+        var requestCommand = new GetProductCategoriesCommand();
+        var responseCommand = await _mediator.Send(requestCommand, cancellationToken);
+
+        return Ok(responseCommand);
     }
 }
