@@ -16,6 +16,7 @@ public class UpdateUserHandler : IRequestHandler<UpdateUserCommand, UpdateUserRe
     private readonly IUserRepository _userRepository;
     private readonly IMapper _mapper;
     private readonly IPasswordHasher _passwordHasher;
+    private readonly IUserRules _userRules;
 
     /// <summary>
     /// Initializes a new instance of CreateUserHandler
@@ -23,11 +24,12 @@ public class UpdateUserHandler : IRequestHandler<UpdateUserCommand, UpdateUserRe
     /// <param name="userRepository">The user repository</param>
     /// <param name="mapper">The AutoMapper instance</param>
     /// <param name="validator">The validator for CreateUserCommand</param>
-    public UpdateUserHandler(IUserRepository userRepository, IMapper mapper, IPasswordHasher passwordHasher)
+    public UpdateUserHandler(IUserRepository userRepository, IMapper mapper, IPasswordHasher passwordHasher, IUserRules userRules)
     {
         _userRepository = userRepository;
         _mapper = mapper;
         _passwordHasher = passwordHasher;
+        _userRules = userRules;
     }
 
     /// <summary>
@@ -44,9 +46,7 @@ public class UpdateUserHandler : IRequestHandler<UpdateUserCommand, UpdateUserRe
         //if (!validationResult.IsValid)
         //    throw new ValidationException(validationResult.Errors);
 
-        // apply ioc
-        var userRules = new UserRules(_userRepository);
-        await userRules.CheckRulesToUpdate(command, cancellationToken);
+        await _userRules.CheckRulesToUpdate(command, cancellationToken);
 
         var user = _mapper.Map<User>(command);
         var updatedUser = await _userRepository.UpdateAsync(user, cancellationToken);
