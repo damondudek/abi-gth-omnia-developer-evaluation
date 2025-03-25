@@ -1,6 +1,7 @@
 ﻿using Ambev.DeveloperEvaluation.Domain.Consts.Errors;
 using Ambev.DeveloperEvaluation.Domain.Models;
-using System.Text.Json;
+
+namespace Ambev.DeveloperEvaluation.WebApi.Middleware;
 
 public class UnauthorizedExceptionMiddleware
 {
@@ -21,8 +22,6 @@ public class UnauthorizedExceptionMiddleware
 
     private static Task HandleUnauthorizedExceptionAsync(HttpContext context)
     {
-        context.Response.ContentType = "application/json";
-
         var response = new ApiErrorResponse<string>
         {
             Type = ErrorType.AuthenticationError,
@@ -30,6 +29,6 @@ public class UnauthorizedExceptionMiddleware
             Details = "The provided authentication token has expired or is invalid"
         };
 
-        return context.Response.WriteAsync(JsonSerializer.Serialize(response));
+        return JsonCamelCaseResponse.HandleResponseAsync(context, StatusCodes.Status401Unauthorized, response);
     }
 }

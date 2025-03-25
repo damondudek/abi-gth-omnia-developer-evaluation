@@ -1,15 +1,13 @@
 ﻿using Ambev.DeveloperEvaluation.Domain.Consts.Errors;
 using Ambev.DeveloperEvaluation.Domain.Models;
-using FluentValidation;
-using System.Collections;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Middleware;
 
-public class ValidationExceptionMiddleware
+public class KeyNotFoundExceptionMiddleware
 {
     private readonly RequestDelegate _next;
 
-    public ValidationExceptionMiddleware(RequestDelegate next)
+    public KeyNotFoundExceptionMiddleware(RequestDelegate next)
     {
         _next = next;
     }
@@ -20,20 +18,19 @@ public class ValidationExceptionMiddleware
         {
             await _next(context);
         }
-        catch (ValidationException ex)
+        catch (KeyNotFoundException ex)
         {
-            await HandleValidationExceptionAsync(context, ex);
+            await HandleKeyNotFoundExceptionAsync(context, ex);
         }
     }
 
-    private static Task HandleValidationExceptionAsync(HttpContext context, ValidationException exception)
+    private static Task HandleKeyNotFoundExceptionAsync(HttpContext context, KeyNotFoundException exception)
     {
-        var response = new ApiErrorResponse<IEnumerable>
+        var response = new ApiErrorResponse<string>
         {
             Type = ErrorType.ValidationError,
-            Error = "Invalid input data",
-            Details = exception.Errors
-                .Select(error => error.ErrorMessage)
+            Error = "Invalid argument",
+            Details = exception.Message
         };
 
         return JsonCamelCaseResponse.HandleResponseAsync(context, StatusCodes.Status400BadRequest, response);

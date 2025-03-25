@@ -23,7 +23,7 @@ namespace Ambev.DeveloperEvaluation.Application.Users.Common
         {
             var existingUser = await _userRepository.GetByIdAsync(command.Id, cancellationToken);
             if (existingUser is null)
-                throw new InvalidOperationException($"User with id {command.Id} does not exists");
+                throw new KeyNotFoundException($"User with id {command.Id} does not exists");
 
             if (existingUser.Email != command.Email)
                 await CheckIsUserExistsByEmail(command.Email, cancellationToken);
@@ -35,14 +35,14 @@ namespace Ambev.DeveloperEvaluation.Application.Users.Common
         {
             var existingUser = await _userRepository.GetByEmailAsync(email, cancellationToken);
             if (existingUser is not null)
-                throw new InvalidOperationException($"User with email {email} already exists");
+                throw new ArgumentException($"User with email {email} already exists");
         }
 
         private async Task CheckIsUserExistsByUsername(string username, CancellationToken cancellationToken)
         {
             var existingUserByUsername = await _userRepository.GetByUsernameAsync(username, cancellationToken);
             if (existingUserByUsername is not null)
-                throw new InvalidOperationException($"User with username {username} already exists");
+                throw new ArgumentException($"User with username {username} already exists");
         }
     }
 

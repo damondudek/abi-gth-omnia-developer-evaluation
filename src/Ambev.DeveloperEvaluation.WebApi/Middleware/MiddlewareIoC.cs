@@ -6,6 +6,8 @@
         {
             app.UseMiddleware<ValidationExceptionMiddleware>();
             app.UseMiddleware<UnauthorizedExceptionMiddleware>();
+            app.UseMiddleware<ArgumentExceptionMiddleware>();
+            app.UseMiddleware<KeyNotFoundExceptionMiddleware>();
         }
     }
 }

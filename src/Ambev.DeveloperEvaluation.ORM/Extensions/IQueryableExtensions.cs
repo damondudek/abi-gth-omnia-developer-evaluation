@@ -1,5 +1,7 @@
 ﻿using Ambev.DeveloperEvaluation.Domain.Models;
 
+namespace Ambev.DeveloperEvaluation.ORM.Extensions;
+
 public static class IQueryableExtensions
 {
     public static Task<PaginatedList<T>> ToPagedListAsync<T>(this IQueryable<T> source, int pageNumber, int pageSize, CancellationToken cancellationToken)
