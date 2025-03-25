@@ -1,6 +1,4 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Enums;
-using Ambev.DeveloperEvaluation.Domain.Validation;
-using FluentValidation;
+﻿using FluentValidation;
 
 namespace Ambev.DeveloperEvaluation.Application.Products.CreateProduct;
 
@@ -23,6 +21,6 @@ public class CreateProductCommandValidator : AbstractValidator<CreateProductComm
     /// </remarks>
     public CreateProductCommandValidator()
     {
-        
+
     }
 }

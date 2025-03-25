@@ -28,7 +28,7 @@ public class UserRepository : BaseRepository<User, DefaultContext>, IUserReposit
 
         return pagedList;
     }
-    
+
 
     /// <summary>
     /// Retrieves users

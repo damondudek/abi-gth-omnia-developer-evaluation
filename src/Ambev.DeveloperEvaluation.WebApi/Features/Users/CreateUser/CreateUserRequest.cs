@@ -29,7 +29,7 @@ public class CreateUserRequest
     /// <summary>
     /// Gets or sets the phone number in format (XX) XXXXX-XXXX.
     /// </summary>
-    public string Phone { get; set; } = string.Empty;   
+    public string Phone { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the initial status of the user account.

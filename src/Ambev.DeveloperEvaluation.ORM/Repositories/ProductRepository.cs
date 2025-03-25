@@ -16,7 +16,7 @@ public class ProductRepository : BaseRepository<Product, DefaultContext>, IProdu
     public ProductRepository(DefaultContext context) : base(context)
     {
     }
-    
+
     /// <summary>
     /// Retrieves users
     /// </summary>

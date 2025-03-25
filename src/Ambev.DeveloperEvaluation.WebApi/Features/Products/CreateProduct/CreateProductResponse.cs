@@ -5,5 +5,5 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Products.CreateProduct;
 /// </summary>
 public class CreateProductResponse
 {
-    
+
 }
