@@ -31,6 +31,7 @@ public class CreateUserHandlerTests
         _userRepository = Substitute.For<IUserRepository>();
         _mapper = Substitute.For<IMapper>();
         _passwordHasher = Substitute.For<IPasswordHasher>();
+        _userRules = Substitute.For<IUserRules>();
         _handler = new CreateUserHandler(_userRepository, _mapper, _passwordHasher, _userRules);
     }
 

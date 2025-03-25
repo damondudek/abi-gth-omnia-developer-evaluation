@@ -14,4 +14,34 @@ public class CreateProductResult
     /// </summary>
     /// <value>A GUID that uniquely identifies the created user in the system.</value>
     public Guid Id { get; set; }
+
+    /// <summary>
+    /// The title of the product.
+    /// </summary>
+    public string Title { get; set; }
+
+    /// <summary>
+    /// The price of the product.
+    /// </summary>
+    public decimal Price { get; set; }
+
+    /// <summary>
+    /// A brief description of the product.
+    /// </summary>
+    public string Description { get; set; }
+
+    /// <summary>
+    /// The category the product belongs to.
+    /// </summary>
+    public string Category { get; set; }
+
+    /// <summary>
+    /// The URL of the product image.
+    /// </summary>
+    public string Image { get; set; }
+
+    /// <summary>
+    /// The rating details of the product.
+    /// </summary>
+    public CreateProductRatingCommand Rating { get; set; } = new CreateProductRatingCommand();
 }

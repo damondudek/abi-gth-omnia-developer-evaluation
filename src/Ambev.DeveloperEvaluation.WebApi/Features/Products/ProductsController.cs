@@ -2,7 +2,6 @@
 using Ambev.DeveloperEvaluation.Domain.Models;
 using Ambev.DeveloperEvaluation.WebApi.Features.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.CreateProduct;
-using Ambev.DeveloperEvaluation.WebApi.Features.Users;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -53,7 +52,7 @@ public class ProductsController : BaseController
         var responseCommand = await _mediator.Send(requestCommand, cancellationToken);
 
         var response = _mapper.Map<CreateProductResponse>(responseCommand);
-        var apiResponse = new ApiDataResponse<CreateProductResponse>(response, UsersMessage.UserCreatedSuccess);
+        var apiResponse = new ApiDataResponse<CreateProductResponse>(response, ProductsMessage.ProductCreatedSuccess);
 
         return Created(string.Empty, apiResponse);
     }

@@ -10,8 +10,6 @@ public class DefaultContext : DbContext
 {
     public DbSet<User> Users { get; set; }
     public DbSet<Product> Products { get; set; }
-    public DbSet<ProductCategory> ProductCategories { get; set; }
-
 
     public DefaultContext(DbContextOptions<DefaultContext> options) : base(options)
     {
@@ -20,25 +18,7 @@ public class DefaultContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
-        CustomPluralizationConvention.Configure(modelBuilder);
-
-        //modelBuilder.Entity<User>()
-        //    .HasMany(u => u.Addresses)
-        //    .WithOne(a => a.User)
-        //    .HasForeignKey(a => a.UserId);
-
         base.OnModelCreating(modelBuilder);
-    }
-
-    public class CustomPluralizationConvention
-    {
-        public static void Configure(ModelBuilder modelBuilder)
-        {
-            foreach (var entity in modelBuilder.Model.GetEntityTypes())
-            {
-                entity.SetTableName(entity.ClrType.Name);
-            }
-        }
     }
 }
 

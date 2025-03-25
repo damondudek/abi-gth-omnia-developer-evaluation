@@ -8,6 +8,7 @@
             app.UseMiddleware<UnauthorizedExceptionMiddleware>();
             app.UseMiddleware<ArgumentExceptionMiddleware>();
             app.UseMiddleware<KeyNotFoundExceptionMiddleware>();
+            app.UseMiddleware<ExceptionMiddleware>();
         }
     }
 }

@@ -13,7 +13,12 @@ public class CreateProductProfile : Profile
     /// </summary>
     public CreateProductProfile()
     {
-        CreateMap<CreateProductCommand, Product>();
-        CreateMap<Product, CreateProductResult>();
+        CreateMap<CreateProductCommand, Product>()
+            .ForMember(d => d.RatingCount, opt => opt.MapFrom(src => src.Rating.Count))
+            .ForMember(d => d.AverageRating, opt => opt.MapFrom(src => src.Rating.Rate));
+        CreateMap<Product, CreateProductResult>()
+            .ForPath(d => d.Rating.Rate, opt => opt.MapFrom(src => src.AverageRating))
+            .ForPath(d => d.Rating.Count, opt => opt.MapFrom(src => src.RatingCount));
+            
     }
 }

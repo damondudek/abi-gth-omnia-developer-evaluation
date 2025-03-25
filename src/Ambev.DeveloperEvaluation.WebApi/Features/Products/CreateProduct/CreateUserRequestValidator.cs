@@ -2,24 +2,44 @@
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Products.CreateProduct;
 
-/// <summary>
-/// Validator for CreateProductRequest that defines validation rules for product creation.
-/// </summary>
 public class CreateProductRequestValidator : AbstractValidator<CreateProductRequest>
 {
-    /// <summary>
-    /// Initializes a new instance of the CreateProductRequestValidator with defined validation rules.
-    /// </summary>
-    /// <remarks>
-    /// Validation rules include:
-    /// - Email: Must be valid format (using EmailValidator)
-    /// - Username: Required, length between 3 and 50 characters
-    /// - Password: Must meet security requirements (using PasswordValidator)
-    /// - Phone: Must match international format (+X XXXXXXXXXX)
-    /// - Status: Cannot be Unknown
-    /// - Role: Cannot be None
-    /// </remarks>
     public CreateProductRequestValidator()
     {
+        RuleFor(x => x.Title)
+            .NotEmpty().WithMessage("Title is required.")
+            .MaximumLength(255).WithMessage("Title cannot exceed 255 characters.");
+
+        RuleFor(x => x.Price)
+            .GreaterThan(0).WithMessage("Price must be greater than 0.");
+
+        RuleFor(x => x.Description)
+            .NotEmpty().WithMessage("Description is required.")
+            .MaximumLength(1000).WithMessage("Description cannot exceed 1000 characters.");
+
+        RuleFor(x => x.Category)
+            .NotEmpty().WithMessage("Category is required.")
+            .MaximumLength(255).WithMessage("Category cannot exceed 255 characters.");
+
+        RuleFor(x => x.Image)
+            .NotEmpty().WithMessage("Image URL is required.")
+            .Must(uri => Uri.TryCreate(uri, UriKind.Absolute, out _)).WithMessage("Image must be a valid URL.");
+
+        RuleFor(x => x.Rating).SetValidator(new CreateProductRatingRequestValidator());
+    }
+}
+
+/// <summary>
+/// Validates the ProductRating data.
+/// </summary>
+public class CreateProductRatingRequestValidator : AbstractValidator<CreateProductRatingRequest>
+{
+    public CreateProductRatingRequestValidator()
+    {
+        RuleFor(x => x.Rate)
+            .InclusiveBetween(0, 5).WithMessage("Rate must be between 0 and 5.");
+
+        RuleFor(x => x.Count)
+            .GreaterThanOrEqualTo(0).WithMessage("Count must be a non-negative integer.");
     }
 }

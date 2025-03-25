@@ -40,8 +40,8 @@ public class CreateProductHandler : IRequestHandler<CreateProductCommand, Create
             throw new ValidationException(validationResult.Errors);
 
         var product = _mapper.Map<Product>(command);
-        var createdProduct = await _productRepository.CreateAsync(product, cancellationToken);
-        var result = _mapper.Map<CreateProductResult>(createdProduct);
+        var productCreated = await _productRepository.CreateAsync(product, cancellationToken);
+        var result = _mapper.Map<CreateProductResult>(productCreated);
 
         return result;
     }
