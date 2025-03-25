@@ -1,4 +1,4 @@
-﻿namespace Ambev.DeveloperEvaluation.Application.Errors;
+﻿namespace Ambev.DeveloperEvaluation.Domain.Consts.Errors;
 
 /// <summary>
 /// Contains predefined error types for standard error handling.

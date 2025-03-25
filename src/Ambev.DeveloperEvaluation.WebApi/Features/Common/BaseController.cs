@@ -1,9 +1,9 @@
-﻿using Ambev.DeveloperEvaluation.Application.Errors;
-using Ambev.DeveloperEvaluation.WebApi.Features.Users;
+﻿using Ambev.DeveloperEvaluation.Domain.Consts.Errors;
+using Ambev.DeveloperEvaluation.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
-namespace Ambev.DeveloperEvaluation.WebApi.Common;
+namespace Ambev.DeveloperEvaluation.WebApi.Features.Common;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -16,10 +16,10 @@ public class BaseController : ControllerBase
         User.FindFirst(ClaimTypes.Email)?.Value ?? throw new NullReferenceException();
 
     protected IActionResult Ok<T>(T data, string message) =>
-            base.Ok(new ApiResponseWithData<T>(data, message));
+            base.Ok(new ApiDataResponse<T>(data, message));
 
     protected IActionResult Created<T>(string routeName, object routeValues, T data) =>
-        base.CreatedAtRoute(routeName, routeValues, new ApiResponseWithData<T> { Data = data });
+        base.CreatedAtRoute(routeName, routeValues, new ApiDataResponse<T> { Data = data });
 
     protected IActionResult BadRequest(string message) =>
         base.BadRequest(new ApiResponse(message, false));
@@ -41,7 +41,7 @@ public class BaseController : ControllerBase
         });
 
     protected IActionResult OkPaginated<T>(PaginatedList<T> pagedList, string message = "") =>
-            Ok(new PaginatedResponse<T>
+            Ok(new ApiPaginatedResponse<T>
             {
                 Data = pagedList,
                 CurrentPage = pagedList.CurrentPage,

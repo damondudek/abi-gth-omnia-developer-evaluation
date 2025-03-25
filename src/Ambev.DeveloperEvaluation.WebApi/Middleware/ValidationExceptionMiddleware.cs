@@ -1,6 +1,5 @@
-﻿using Ambev.DeveloperEvaluation.Application.Errors;
-using Ambev.DeveloperEvaluation.Common.Validation;
-using Ambev.DeveloperEvaluation.WebApi.Common;
+﻿using Ambev.DeveloperEvaluation.Domain.Consts.Errors;
+using Ambev.DeveloperEvaluation.Domain.Models;
 using FluentValidation;
 using System.Collections;
 using System.Text.Json;

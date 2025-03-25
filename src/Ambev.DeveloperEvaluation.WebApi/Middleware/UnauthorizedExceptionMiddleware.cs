@@ -1,5 +1,5 @@
-﻿using Ambev.DeveloperEvaluation.Application.Errors;
-using Ambev.DeveloperEvaluation.WebApi.Common;
+﻿using Ambev.DeveloperEvaluation.Domain.Consts.Errors;
+using Ambev.DeveloperEvaluation.Domain.Models;
 using System.Text.Json;
 
 public class UnauthorizedExceptionMiddleware

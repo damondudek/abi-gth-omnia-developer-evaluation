@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
-using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Users.CreateUser;
 using Ambev.DeveloperEvaluation.WebApi.Features.Users.GetUser;
 using Ambev.DeveloperEvaluation.WebApi.Features.Users.DeleteUser;
@@ -12,6 +11,8 @@ using Ambev.DeveloperEvaluation.Application.Users.UpdateUser;
 using Ambev.DeveloperEvaluation.WebApi.Features.Users.UpdateUser;
 using Ambev.DeveloperEvaluation.Application.Users.GetUsers;
 using Microsoft.AspNetCore.Authorization;
+using Ambev.DeveloperEvaluation.WebApi.Features.Common;
+using Ambev.DeveloperEvaluation.Domain.Models;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Users;
 
@@ -45,7 +46,7 @@ public class UsersController : BaseController
     /// <returns>The created user details</returns>
     [AllowAnonymous]
     [HttpPost]
-    [ProducesResponseType(typeof(ApiResponseWithData<CreateUserResponse>), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ApiDataResponse<CreateUserResponse>), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreateUser([FromBody] CreateUserRequest request, CancellationToken cancellationToken)
     {
@@ -59,7 +60,7 @@ public class UsersController : BaseController
         var responseCommand = await _mediator.Send(requestCommand, cancellationToken);
 
         var response = _mapper.Map<CreateUserResponse>(responseCommand);
-        var apiResponse = new ApiResponseWithData<CreateUserResponse>(response, UsersMessage.UserCreatedSuccess);
+        var apiResponse = new ApiDataResponse<CreateUserResponse>(response, UsersMessage.UserCreatedSuccess);
 
         return Created(string.Empty, apiResponse);
     }
@@ -72,7 +73,7 @@ public class UsersController : BaseController
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>The updated user details</returns>
     [HttpPut("{id}")]
-    [ProducesResponseType(typeof(ApiResponseWithData<UpdateUserResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiDataResponse<UpdateUserResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> UpdateUser([FromRoute] Guid id, [FromBody] UpdateUserRequest request, CancellationToken cancellationToken)
     {
@@ -88,7 +89,7 @@ public class UsersController : BaseController
         var responseCommand = await _mediator.Send(requestCommand, cancellationToken);
 
         var response = _mapper.Map<UpdateUserResponse>(responseCommand);
-        var apiResponse = new ApiResponseWithData<UpdateUserResponse>(response, UsersMessage.UserUpdatedSuccess);
+        var apiResponse = new ApiDataResponse<UpdateUserResponse>(response, UsersMessage.UserUpdatedSuccess);
 
         return Ok(apiResponse);
     }
@@ -99,15 +100,19 @@ public class UsersController : BaseController
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>The user details if found</returns>
     [HttpGet]
-    [ProducesResponseType(typeof(ApiResponseWithData<IList<GetUserResponse>>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(PaginatedResponse<GetUserResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> GetUsers(CancellationToken cancellationToken)
+    public async Task<IActionResult> GetUsers([FromQuery] QueryParameters queryParameters, CancellationToken cancellationToken)
     {
-        var requestCommand = new GetUsersCommand();
+        var requestCommand = new GetUsersCommand()
+        {
+            PageNumber = queryParameters.PageNumber,
+            PageSize = queryParameters.PageSize,
+        };
         var responseCommand = await _mediator.Send(requestCommand, cancellationToken);
-        var response = _mapper.Map<IList<GetUserResponse>>(responseCommand);
+        var response = _mapper.Map<PaginatedResponse<GetUserResponse>>(responseCommand);
 
-        return Ok(response, UsersMessage.UsersRetrievedSuccess);
+        return Ok(response);
     }
 
     /// <summary>
@@ -117,7 +122,7 @@ public class UsersController : BaseController
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>The user details if found</returns>
     [HttpGet("{id}")]
-    [ProducesResponseType(typeof(ApiResponseWithData<GetUserResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiDataResponse<GetUserResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetUser([FromRoute] Guid id, CancellationToken cancellationToken)
@@ -134,7 +139,7 @@ public class UsersController : BaseController
             var requestCommand = _mapper.Map<GetUserCommand>(request.Id);
             var responseCommand = await _mediator.Send(requestCommand, cancellationToken);
             var response = _mapper.Map<GetUserResponse>(responseCommand);
-            var apiResponse = new ApiResponseWithData<GetUserResponse>(response, UsersMessage.UserRetrievedSuccess);
+            var apiResponse = new ApiDataResponse<GetUserResponse>(response, UsersMessage.UserRetrievedSuccess);
 
             return Ok(apiResponse);
 

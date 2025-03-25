@@ -1,4 +1,5 @@
 using Ambev.DeveloperEvaluation.Domain.Entities;
+using Ambev.DeveloperEvaluation.Domain.Models;
 
 namespace Ambev.DeveloperEvaluation.Domain.Repositories;
 
@@ -19,7 +20,7 @@ public interface IUserRepository : IBaseRepository<User>
     /// </summary>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>The user if found, null otherwise</returns>
-    Task<List<User>> GetByPaginationAsync(CancellationToken cancellationToken = default);
+    Task<PaginatedList<User>> GetPaginatedAsync(int pageNumber, int pageSize, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Retrieves a user by their email address

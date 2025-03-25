@@ -1,11 +1,12 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
-using Ambev.DeveloperEvaluation.WebApi.Common;
 using Microsoft.AspNetCore.Authorization;
 using Ambev.DeveloperEvaluation.WebApi.Features.Users;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.CreateProduct;
 using Ambev.DeveloperEvaluation.Application.Products.CreateProduct;
+using Ambev.DeveloperEvaluation.Domain.Models;
+using Ambev.DeveloperEvaluation.WebApi.Features.Common;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Products;
 
@@ -38,7 +39,7 @@ public class ProductsController : BaseController
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>The created user details</returns>
     [HttpPost]
-    [ProducesResponseType(typeof(ApiResponseWithData<CreateProductResponse>), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ApiDataResponse<CreateProductResponse>), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreateProduct([FromBody] CreateProductRequest request, CancellationToken cancellationToken)
     {
@@ -52,7 +53,7 @@ public class ProductsController : BaseController
         var responseCommand = await _mediator.Send(requestCommand, cancellationToken);
 
         var response = _mapper.Map<CreateProductResponse>(responseCommand);
-        var apiResponse = new ApiResponseWithData<CreateProductResponse>(response, UsersMessage.UserCreatedSuccess);
+        var apiResponse = new ApiDataResponse<CreateProductResponse>(response, UsersMessage.UserCreatedSuccess);
 
         return Created(string.Empty, apiResponse);
     }

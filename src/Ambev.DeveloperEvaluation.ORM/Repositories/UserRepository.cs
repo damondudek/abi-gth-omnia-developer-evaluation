@@ -1,4 +1,5 @@
 ﻿using Ambev.DeveloperEvaluation.Domain.Entities;
+using Ambev.DeveloperEvaluation.Domain.Models;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,6 +20,15 @@ public class UserRepository : BaseRepository<User, DefaultContext>, IUserReposit
     public Task<List<User>> GetAllAsync(CancellationToken cancellationToken = default)
         => _context.Users.AsNoTracking().ToListAsync(cancellationToken);
 
+
+    public Task<PaginatedList<User>> GetPaginatedAsync(int pageNumber, int pageSize, CancellationToken cancellationToken = default)
+    {
+        var query = _context.Users.AsNoTracking().AsQueryable();
+        var pagedList = PaginatedList<User>.CreateAsync(query, pageNumber, pageSize, cancellationToken);
+
+        return pagedList;
+    }
+    
 
     /// <summary>
     /// Retrieves users

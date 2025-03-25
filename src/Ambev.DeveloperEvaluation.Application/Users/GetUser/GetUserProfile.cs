@@ -1,5 +1,6 @@
 using AutoMapper;
 using Ambev.DeveloperEvaluation.Domain.Entities;
+using Ambev.DeveloperEvaluation.Domain.Models;
 
 namespace Ambev.DeveloperEvaluation.Application.Users.GetUser;
 
@@ -14,5 +15,8 @@ public class GetUserProfile : Profile
     public GetUserProfile()
     {
         CreateMap<User, GetUserResult>();
+        CreateMap<PaginatedList<User>, PaginatedResponse<GetUserResult>>()
+            .ForMember(d => d.Data, opt => opt.MapFrom(src => src.ToList()))
+            .ForMember(d => d.TotalItems, opt => opt.MapFrom(src => src.TotalCount));
     }
 }
