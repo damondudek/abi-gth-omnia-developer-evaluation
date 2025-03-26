@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Mvc;
 using Ambev.DeveloperEvaluation.Application.Products.GetProductsByCategory;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.GetProduct;
 using Ambev.DeveloperEvaluation.Application.Products.GetProduct;
+using Ambev.DeveloperEvaluation.WebApi.Features.Products.DeleteProduct;
+using Ambev.DeveloperEvaluation.Application.Products.DeleteProduct;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Products;
 
@@ -139,5 +141,31 @@ public class ProductsController : BaseController
         var response = _mapper.Map<PaginatedResponse<GetProductResponse>>(responseCommand);
 
         return Ok(response);
+    }
+
+    /// <summary>
+    /// Deletes a product by its ID
+    /// </summary>
+    /// <param name="id">The unique identifier of the product to delete</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Success response if the product was deleted</returns>
+    [HttpDelete("{id}")]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> DeleteProduct([FromRoute] Guid id, CancellationToken cancellationToken)
+    {
+        var request = new DeleteProductRequest { Id = id };
+        var validator = new DeleteProductRequestValidator();
+        var validationResult = await validator.ValidateAsync(request, cancellationToken);
+
+        if (!validationResult.IsValid)
+            return BadRequest(validationResult.Errors);
+
+        var command = _mapper.Map<DeleteProductCommand>(request.Id);
+        await _mediator.Send(command, cancellationToken);
+        var apiResponse = new ApiResponse(ProductsMessage.ProductDeletedSuccess);
+
+        return Ok(apiResponse);
     }
 }
