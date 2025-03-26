@@ -1,4 +1,5 @@
 using Ambev.DeveloperEvaluation.Domain.Entities;
+using Ambev.DeveloperEvaluation.Domain.Models;
 
 namespace Ambev.DeveloperEvaluation.Domain.Repositories;
 
@@ -21,4 +22,11 @@ public interface IProductRepository : IBaseRepository<Product>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>The product`s categories</returns>
     Task<List<string>> GetProductCategoriesAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Retrieves products by category
+    /// </summary>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Products by category</returns>
+    Task<PaginatedList<Product>> GetPaginatedByCategoryAsync(string category, int pageNumber, int pageSize, CancellationToken cancellationToken = default);
 }

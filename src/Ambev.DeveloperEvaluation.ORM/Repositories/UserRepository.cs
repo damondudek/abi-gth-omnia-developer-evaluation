@@ -20,7 +20,6 @@ public class UserRepository : BaseRepository<User, DefaultContext>, IUserReposit
     public Task<List<User>> GetAllAsync(CancellationToken cancellationToken = default)
         => _context.Users.AsNoTracking().ToListAsync(cancellationToken);
 
-
     public Task<PaginatedList<User>> GetPaginatedAsync(int pageNumber, int pageSize, CancellationToken cancellationToken = default)
     {
         var query = _context.Users.AsNoTracking().AsQueryable();
@@ -28,15 +27,6 @@ public class UserRepository : BaseRepository<User, DefaultContext>, IUserReposit
 
         return pagedList;
     }
-
-
-    /// <summary>
-    /// Retrieves users
-    /// </summary>
-    /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>The list of users</returns>
-    public Task<List<User>> GetByPaginationAsync(CancellationToken cancellationToken = default)
-        => _context.Users.AsNoTracking().ToListAsync(cancellationToken);
 
     /// <summary>
     /// Retrieves a user by their email address
