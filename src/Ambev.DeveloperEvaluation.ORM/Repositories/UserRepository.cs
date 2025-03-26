@@ -32,15 +32,11 @@ public class UserRepository : BaseRepository<User, DefaultContext>, IUserReposit
     /// Retrieves a user by their email address
     /// </summary>
     public Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default)
-    {
-        return _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
-    }
+        => _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
 
     /// <summary>
     /// Retrieves a user by their username
     /// </summary>
     public Task<User?> GetByUsernameAsync(string username, CancellationToken cancellationToken = default)
-    {
-        return _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Username == username, cancellationToken);
-    }
+        => _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Username == username, cancellationToken);
 }

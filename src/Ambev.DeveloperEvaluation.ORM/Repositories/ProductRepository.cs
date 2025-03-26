@@ -23,8 +23,19 @@ public class ProductRepository : BaseRepository<Product, DefaultContext>, IProdu
     /// </summary>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>The list of products</returns>
-    public Task<List<Product>> GetByPaginationAsync(CancellationToken cancellationToken = default)
-        => _context.Products.AsNoTracking().ToListAsync(cancellationToken);
+    public Task<PaginatedList<Product>> GetPaginatedAsync(int pageNumber, int pageSize, CancellationToken cancellationToken = default)
+    {
+        var query = _context.Products.AsNoTracking().AsQueryable();
+        var pagedList = PaginatedList<Product>.CreateAsync(query, pageNumber, pageSize, cancellationToken);
+
+        return pagedList;
+    }
+
+    /// <summary>
+    /// Retrieves a product by its title
+    /// </summary>
+    public Task<Product?> GetByTitleAsync(string title, CancellationToken cancellationToken = default)
+        => _context.Products.AsNoTracking().FirstOrDefaultAsync(p => p.Title == title, cancellationToken);
 
     /// <summary>
     /// Retrieves product`s categories

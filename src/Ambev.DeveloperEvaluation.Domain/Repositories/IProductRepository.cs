@@ -8,13 +8,21 @@ namespace Ambev.DeveloperEvaluation.Domain.Repositories;
 /// </summary>
 public interface IProductRepository : IBaseRepository<Product>
 {
+
     /// <summary>
     /// Retrieves products
     /// </summary>
     /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>The products</returns>
-    Task<List<Product>> GetByPaginationAsync(CancellationToken cancellationToken = default);
+    /// <returns>The products if found, null otherwise</returns>
+    Task<PaginatedList<Product>> GetPaginatedAsync(int pageNumber, int pageSize, CancellationToken cancellationToken = default);
 
+    /// <summary>
+    /// Retrieves a product by its title
+    /// </summary>
+    /// <param name="title">The title to search for</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>The product if found, null otherwise</returns>
+    Task<Product?> GetByTitleAsync(string title, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Retrieves product`s categories
