@@ -43,7 +43,19 @@ public class BaseRepository<TEntity, TContext> where TEntity : class where TCont
     public async Task<TEntity> UpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
         if (entity is BaseEntity baseEntity)
+        {
             baseEntity.UpdatedAt = DateTime.UtcNow;
+
+            var originalEntity = await GetByIdAsync(baseEntity.Id, cancellationToken);
+
+            if (originalEntity != null)
+            {
+                if (originalEntity is BaseEntity originalBaseEntity)
+                {
+                    baseEntity.CreatedAt = originalBaseEntity.CreatedAt;
+                }
+            }
+        }
 
         _dbSet.Update(entity);
         await _context.SaveChangesAsync(cancellationToken);

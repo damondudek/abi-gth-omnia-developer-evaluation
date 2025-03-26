@@ -11,4 +11,5 @@ to update database
 > dotnet ef database update --project ../Ambev.DeveloperEvaluation.ORM
 
 ## doubts
- * the documentation says that we need to do the authentication by username, not by email 
+ * the documentation says that we need to do the authentication by username, not by email
+ * I couldn't understand what's date on cart api (if it's a data of creation, we need to left it on system domain)
