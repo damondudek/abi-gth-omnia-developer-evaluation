@@ -29,8 +29,8 @@ public class CartRepository : BaseRepository<Cart, DefaultContext>, ICartReposit
     }
 
     /// <summary>
-    /// Retrieves a cart by its user ID
+    /// Retrieves cart`s list by its user ID
     /// </summary>
-    public Task<Cart?> GetByUserIdAsync(Guid userId, CancellationToken cancellationToken = default)
-        => _context.Carts.AsNoTracking().Include(c => c.Products).FirstOrDefaultAsync(c => c.UserId == userId, cancellationToken);
+    public Task<List<Cart>> GetByUserIdAsync(Guid userId, CancellationToken cancellationToken = default)
+        => _context.Carts.AsNoTracking().Include(c => c.Products).Where(c => c.UserId == userId).ToListAsync(cancellationToken);
 }

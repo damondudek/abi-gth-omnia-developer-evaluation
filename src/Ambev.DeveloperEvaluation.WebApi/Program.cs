@@ -10,6 +10,10 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Rebus.Config;
+using Ambev.DeveloperEvaluation.Domain.Events;
+using Rebus.Routing.TypeBased;
+using Rebus.Serialization.Json;
+using Ambev.DeveloperEvaluation.Application.Carts.UpdateCart;
 
 namespace Ambev.DeveloperEvaluation.WebApi;
 
@@ -43,7 +47,12 @@ public class Program
 
             builder.Services.AddRebus(configure => configure
                 .Transport(t => t.UseRabbitMq(connectionString, queueName))
+                .Routing(r => r.TypeBased()
+                    .Map<UserUpdatedEvent>("cart-update-queue"))
+                .Serialization(s => s.UseSystemTextJson())
             );
+            builder.Services.AutoRegisterHandlersFromAssemblyOf<UserUpdatedEventHandler>();
+
 
             builder.Services.AddJwtAuthentication(builder.Configuration);
 

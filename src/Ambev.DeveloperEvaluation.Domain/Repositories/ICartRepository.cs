@@ -25,10 +25,10 @@ public interface ICartRepository : IBaseRepository<Cart>
     Task<PaginatedList<Cart>> GetPaginatedAsync(int pageNumber, int pageSize, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Retrieves a cart by the user ID
+    /// Retrieves carts by the user ID
     /// </summary>
     /// <param name="userId">The user ID to search for</param>
     /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>The cart if found, null otherwise</returns>
-    Task<Cart?> GetByUserIdAsync(Guid userId, CancellationToken cancellationToken = default);
+    /// <returns>The cart`s list</returns>
+    Task<List<Cart>> GetByUserIdAsync(Guid userId, CancellationToken cancellationToken = default);
 }

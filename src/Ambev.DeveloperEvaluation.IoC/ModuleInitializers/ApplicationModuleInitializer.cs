@@ -1,6 +1,7 @@
 ﻿using Ambev.DeveloperEvaluation.Application.Products.Common;
 using Ambev.DeveloperEvaluation.Application.Users.Common;
 using Ambev.DeveloperEvaluation.Common.Security;
+using Ambev.DeveloperEvaluation.Domain.Events;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -11,6 +12,9 @@ public class ApplicationModuleInitializer : IModuleInitializer
     public void Initialize(WebApplicationBuilder builder)
     {
         builder.Services.AddSingleton<IPasswordHasher, BCryptPasswordHasher>();
+
+        builder.Services.AddTransient<IUserPublisher, UserPublisher>();
+
         builder.Services.AddScoped<IUserRules, UserRules>();
         builder.Services.AddScoped<IProductRules, ProductRules>();
     }
