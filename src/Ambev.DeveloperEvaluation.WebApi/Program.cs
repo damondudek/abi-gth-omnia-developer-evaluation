@@ -9,6 +9,7 @@ using Ambev.DeveloperEvaluation.WebApi.Middleware;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using Rebus.Config;
 
 namespace Ambev.DeveloperEvaluation.WebApi;
 
@@ -34,6 +35,14 @@ public class Program
                     builder.Configuration.GetConnectionString("DefaultConnection"),
                     b => b.MigrationsAssembly("Ambev.DeveloperEvaluation.ORM")
                 )
+            );
+
+            var rabbitMqSettings = builder.Configuration.GetSection("RabbitMQ");
+            var connectionString = rabbitMqSettings["ConnectionString"];
+            var queueName = rabbitMqSettings["QueueName"];
+
+            builder.Services.AddRebus(configure => configure
+                .Transport(t => t.UseRabbitMq(connectionString, queueName))
             );
 
             builder.Services.AddJwtAuthentication(builder.Configuration);
