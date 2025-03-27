@@ -1,4 +1,5 @@
-﻿using Ambev.DeveloperEvaluation.Application.Products.Common;
+﻿using Ambev.DeveloperEvaluation.Application.Carts.Common;
+using Ambev.DeveloperEvaluation.Application.Products.Common;
 using Ambev.DeveloperEvaluation.Application.Users.Common;
 using Ambev.DeveloperEvaluation.Common.Security;
 using Ambev.DeveloperEvaluation.Domain.Events;
@@ -17,5 +18,6 @@ public class ApplicationModuleInitializer : IModuleInitializer
 
         builder.Services.AddScoped<IUserRules, UserRules>();
         builder.Services.AddScoped<IProductRules, ProductRules>();
+        builder.Services.AddScoped<ICartRules, CartRules>();
     }
 }
