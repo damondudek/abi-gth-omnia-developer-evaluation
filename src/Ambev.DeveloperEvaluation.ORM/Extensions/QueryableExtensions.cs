@@ -34,37 +34,54 @@ public static class QueryableExtensions
         var entityType = typeof(T);
         var properties = entityType.GetProperties();
 
+        bool isFirstOrder = true;
+
         foreach (var param in orderParams)
         {
             if (string.IsNullOrWhiteSpace(param))
                 continue;
 
-            var propertyName = string.Empty;
+            var propertyName = param.Trim();
             var orderDescending = false;
+
             if (param.EndsWith(_descOrder, StringComparison.OrdinalIgnoreCase))
             {
-                propertyName = param[..^5];
+                propertyName = param[..^5].Trim();
                 orderDescending = true;
-            } else if (param.EndsWith(_ascOrder, StringComparison.OrdinalIgnoreCase))
-                propertyName = param[..^4];
+            }
+            else if (param.EndsWith(_ascOrder, StringComparison.OrdinalIgnoreCase))
+            {
+                propertyName = param[..^4].Trim();
+            }
 
-            propertyName = propertyName.Trim();
-            if (string.IsNullOrEmpty(propertyName))
-                continue;
+            var property = properties.FirstOrDefault(p =>
+                p.Name.Equals(propertyName, StringComparison.OrdinalIgnoreCase));
 
-            var property = properties.FirstOrDefault(p => p.Name.Equals(propertyName, StringComparison.OrdinalIgnoreCase));
             if (property == null) continue;
 
-            query = orderDescending
-                ? query.OrderByDescending(property.Name)
-                : query.OrderBy(property.Name);
+            if (isFirstOrder)
+            {
+                query = orderDescending
+                    ? query.OrderByDescending(property.Name)
+                    : query.OrderBy(property.Name);
+                isFirstOrder = false;
+            }
+            else
+            {
+                query = orderDescending
+                    ? ((IOrderedQueryable<T>)query).ThenByDescending(property.Name)
+                    : ((IOrderedQueryable<T>)query).ThenBy(property.Name);
+            }
         }
 
         return query;
     }
-        
+
     public static IQueryable<T> ApplyFilters<T>(this IQueryable<T> query, IDictionary<string, string> filters)
     {
+        if (filters is null)
+            return query;
+
         var entityType = typeof(T);
         var properties = entityType.GetProperties();
 
@@ -79,7 +96,7 @@ public static class QueryableExtensions
             {
                 isRangeFilter = true;
                 isMinRangeFilter = key.StartsWith(_minOp);
-                key = key.Substring(_minOp.Length);
+                key = key[_minOp.Length..];
             }
 
             var property = properties.FirstOrDefault(p => p.Name.Equals(key, StringComparison.OrdinalIgnoreCase));
@@ -102,9 +119,9 @@ public static class QueryableExtensions
             if (value.StartsWith(_likeOp) && value.EndsWith(_likeOp))
                 query = query.Where(ContainsPredicate<T>(property.Name, value));
             else if (value.StartsWith(_likeOp))
-                query = query.Where(StartsWithPredicate<T>(property.Name, value));
-            else if (value.EndsWith(_likeOp))
                 query = query.Where(EndsWithPredicate<T>(property.Name, value));
+            else if (value.EndsWith(_likeOp))
+                query = query.Where(StartsWithPredicate<T>(property.Name, value));
         }
         else if (property.PropertyType == typeof(string))
             query = query.Where(EqualsPredicate<T>(property.Name, value));
@@ -236,4 +253,10 @@ public static class QueryableExtensions
 
     private static IOrderedQueryable<T> OrderByDescending<T>(this IQueryable<T> query, string propertyName)
         => query.OrderByDescending(ToLambda<T>(propertyName));
+
+    private static IOrderedQueryable<T> ThenBy<T>(this IOrderedQueryable<T> query, string propertyName)
+        => query.ThenBy(ToLambda<T>(propertyName));
+
+    private static IOrderedQueryable<T> ThenByDescending<T>(this IOrderedQueryable<T> query, string propertyName)
+        => query.ThenByDescending(ToLambda<T>(propertyName));
 }
