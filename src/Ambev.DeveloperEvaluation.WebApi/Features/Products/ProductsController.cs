@@ -14,6 +14,7 @@ using Ambev.DeveloperEvaluation.WebApi.Features.Products.DeleteProduct;
 using Ambev.DeveloperEvaluation.Application.Products.DeleteProduct;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.UpdateProduct;
 using Ambev.DeveloperEvaluation.Application.Products.UpdateProduct;
+using Ambev.DeveloperEvaluation.WebApi.Filters;
 using Ambev.DeveloperEvaluation.Application.Products.GetProducts;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Products;
@@ -100,16 +101,13 @@ public class ProductsController : BaseController
     /// </summary>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>The product details if found</returns>
+    [FilterQuery]
     [HttpGet]
     [ProducesResponseType(typeof(PaginatedResponse<GetProductResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetProducts([FromQuery] QueryParameters queryParameters, CancellationToken cancellationToken)
     {
-        var requestCommand = new GetProductsCommand()
-        {
-            PageNumber = queryParameters.PageNumber,
-            PageSize = queryParameters.PageSize,
-        };
+        var requestCommand = _mapper.Map<GetProductsCommand>(queryParameters);
         var responseCommand = await _mediator.Send(requestCommand, cancellationToken);
         var response = _mapper.Map<PaginatedResponse<GetProductResponse>>(responseCommand);
 
@@ -203,20 +201,16 @@ public class ProductsController : BaseController
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetProductsByCategory([FromRoute] string category, [FromQuery] QueryParameters queryParameters, CancellationToken cancellationToken)
     {
-        var request = new GetProductsByCategoryCommand
-        { 
-            Category = category,
-            PageNumber = queryParameters.PageNumber,
-            PageSize = queryParameters.PageSize,
-        };
         //var validator = new GetProductsByCategoryRequestValidator();
         //var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
         //if (!validationResult.IsValid)
         //    return BadRequest(validationResult.Errors);
 
-        //var requestCommand = _mapper.Map<GetProductsByCategoryCommand>(request);
-        var responseCommand = await _mediator.Send(request, cancellationToken);
+        var requestCommand = _mapper.Map<GetProductsByCategoryCommand>(queryParameters);
+        requestCommand.Category = category;
+
+        var responseCommand = await _mediator.Send(requestCommand, cancellationToken);
         var response = _mapper.Map<PaginatedResponse<GetProductResponse>>(responseCommand);
 
         return Ok(response);

@@ -42,7 +42,7 @@ public class GetProductsByCategoryHandler : IRequestHandler<GetProductsByCategor
         //if (!validationResult.IsValid)
         //    throw new ValidationException(validationResult.Errors);
 
-        var products = await _productRepository.GetPaginatedByCategoryAsync(request.Category, request.PageNumber, request.PageSize, cancellationToken);
+        var products = await _productRepository.GetPaginatedByCategoryAsync(request.Category, request.PageNumber, request.PageSize, request.OrderBy, request.Filters, cancellationToken);
 
         return _mapper.Map<PaginatedResponse<GetProductResult>>(products);
     }

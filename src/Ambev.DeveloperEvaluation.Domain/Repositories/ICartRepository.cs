@@ -22,7 +22,7 @@ public interface ICartRepository : IBaseRepository<Cart>
     /// <param name="pageSize">Number of items per page</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>A paginated list of carts</returns>
-    Task<PaginatedList<Cart>> GetPaginatedAsync(int pageNumber, int pageSize, CancellationToken cancellationToken = default);
+    Task<PaginatedList<Cart>> GetPaginatedAsync(int pageNumber, int pageSize, string orderBy, Dictionary<string, string> filters, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Retrieves carts by the user ID

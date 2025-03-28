@@ -1,6 +1,7 @@
 ﻿using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Models;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
+using Ambev.DeveloperEvaluation.ORM.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Ambev.DeveloperEvaluation.ORM.Repositories;
@@ -20,10 +21,10 @@ public class CartRepository : BaseRepository<Cart, DefaultContext>, ICartReposit
     public Task<List<Cart>> GetAllAsync(CancellationToken cancellationToken = default)
         => _context.Carts.AsNoTracking().Include(c => c.Products).ToListAsync(cancellationToken);
 
-    public Task<PaginatedList<Cart>> GetPaginatedAsync(int pageNumber, int pageSize, CancellationToken cancellationToken = default)
+    public Task<PaginatedList<Cart>> GetPaginatedAsync(int pageNumber, int pageSize, string orderBy, Dictionary<string, string> filters, CancellationToken cancellationToken = default)
     {
         var query = _context.Carts.AsNoTracking().Include(c => c.Products).AsQueryable();
-        var pagedList = PaginatedList<Cart>.CreateAsync(query, pageNumber, pageSize, cancellationToken);
+        var pagedList = query.ToPagedListAsync(pageNumber, pageSize, orderBy, filters, cancellationToken);
 
         return pagedList;
     }

@@ -20,7 +20,7 @@ public interface IUserRepository : IBaseRepository<User>
     /// </summary>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>The user if found, null otherwise</returns>
-    Task<PaginatedList<User>> GetPaginatedAsync(int pageNumber, int pageSize, CancellationToken cancellationToken = default);
+    Task<PaginatedList<User>> GetPaginatedAsync(int pageNumber, int pageSize, string orderBy, Dictionary<string, string> filters, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Retrieves a user by their email address

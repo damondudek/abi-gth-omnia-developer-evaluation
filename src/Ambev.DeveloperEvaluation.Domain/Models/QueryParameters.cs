@@ -19,6 +19,7 @@ namespace Ambev.DeveloperEvaluation.Domain.Models
 
         [FromQuery(Name = "_order")]
         public string OrderBy { get; set; } = string.Empty;
-    }
 
+        public Dictionary<string, string> Filters { get; set; } = [];
+    }
 }

@@ -42,7 +42,7 @@ public class GetCartsHandler : IRequestHandler<GetCartsCommand, PaginatedRespons
         // if (!validationResult.IsValid)
         //     throw new ValidationException(validationResult.Errors);
 
-        var carts = await _cartRepository.GetPaginatedAsync(request.PageNumber, request.PageSize, cancellationToken);
+        var carts = await _cartRepository.GetPaginatedAsync(request.PageNumber, request.PageSize, request.OrderBy, request.Filters, cancellationToken);
 
         return _mapper.Map<PaginatedResponse<GetCartResult>>(carts);
     }

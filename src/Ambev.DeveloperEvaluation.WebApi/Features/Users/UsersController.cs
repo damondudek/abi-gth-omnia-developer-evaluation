@@ -9,6 +9,7 @@ using Ambev.DeveloperEvaluation.WebApi.Features.Users.CreateUser;
 using Ambev.DeveloperEvaluation.WebApi.Features.Users.DeleteUser;
 using Ambev.DeveloperEvaluation.WebApi.Features.Users.GetUser;
 using Ambev.DeveloperEvaluation.WebApi.Features.Users.UpdateUser;
+using Ambev.DeveloperEvaluation.WebApi.Filters;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -99,16 +100,13 @@ public class UsersController : BaseController
     /// </summary>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>The user details if found</returns>
+    [FilterQuery]
     [HttpGet]
     [ProducesResponseType(typeof(PaginatedResponse<GetUserResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetUsers([FromQuery] QueryParameters queryParameters, CancellationToken cancellationToken)
     {
-        var requestCommand = new GetUsersCommand()
-        {
-            PageNumber = queryParameters.PageNumber,
-            PageSize = queryParameters.PageSize,
-        };
+        var requestCommand = _mapper.Map<GetUsersCommand>(queryParameters);
         var responseCommand = await _mediator.Send(requestCommand, cancellationToken);
         var response = _mapper.Map<PaginatedResponse<GetUserResponse>>(responseCommand);
 

@@ -14,7 +14,7 @@ public interface IProductRepository : IBaseRepository<Product>
     /// </summary>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>The products if found, null otherwise</returns>
-    Task<PaginatedList<Product>> GetPaginatedAsync(int pageNumber, int pageSize, CancellationToken cancellationToken = default);
+    Task<PaginatedList<Product>> GetPaginatedAsync(int pageNumber, int pageSize, string orderBy, Dictionary<string, string> filters, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Retrieves a product by its title
@@ -36,5 +36,5 @@ public interface IProductRepository : IBaseRepository<Product>
     /// </summary>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Products by category</returns>
-    Task<PaginatedList<Product>> GetPaginatedByCategoryAsync(string category, int pageNumber, int pageSize, CancellationToken cancellationToken = default);
+    Task<PaginatedList<Product>> GetPaginatedByCategoryAsync(string category, int pageNumber, int pageSize, string orderBy, Dictionary<string, string> filters, CancellationToken cancellationToken = default);
 }

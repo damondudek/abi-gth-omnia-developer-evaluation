@@ -1,6 +1,7 @@
 ﻿using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Models;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
+using Ambev.DeveloperEvaluation.ORM.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Ambev.DeveloperEvaluation.ORM.Repositories;
@@ -23,10 +24,10 @@ public class ProductRepository : BaseRepository<Product, DefaultContext>, IProdu
     /// </summary>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>The list of products</returns>
-    public Task<PaginatedList<Product>> GetPaginatedAsync(int pageNumber, int pageSize, CancellationToken cancellationToken = default)
+    public Task<PaginatedList<Product>> GetPaginatedAsync(int pageNumber, int pageSize, string orderBy, Dictionary<string, string> filters, CancellationToken cancellationToken = default)
     {
         var query = _context.Products.AsNoTracking().AsQueryable();
-        var pagedList = PaginatedList<Product>.CreateAsync(query, pageNumber, pageSize, cancellationToken);
+        var pagedList = query.ToPagedListAsync(pageNumber, pageSize, orderBy, filters, cancellationToken);
 
         return pagedList;
     }
@@ -46,13 +47,13 @@ public class ProductRepository : BaseRepository<Product, DefaultContext>, IProdu
         => _context.Products.AsNoTracking().Select(e => e.Category).Distinct().ToListAsync(cancellationToken);
 
 
-    public Task<PaginatedList<Product>> GetPaginatedByCategoryAsync(string category, int pageNumber, int pageSize, CancellationToken cancellationToken = default)
+    public Task<PaginatedList<Product>> GetPaginatedByCategoryAsync(string category, int pageNumber, int pageSize, string orderBy, Dictionary<string, string> filters, CancellationToken cancellationToken = default)
     {
         var query = _context.Products.AsNoTracking()
             .Where(x => x.Category == category)
             .AsQueryable();
 
-        var pagedList = PaginatedList<Product>.CreateAsync(query, pageNumber, pageSize, cancellationToken);
+        var pagedList = query.ToPagedListAsync(pageNumber, pageSize, orderBy, filters, cancellationToken);
 
         return pagedList;
     }

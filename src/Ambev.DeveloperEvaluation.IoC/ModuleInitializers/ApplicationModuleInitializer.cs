@@ -14,7 +14,7 @@ public class ApplicationModuleInitializer : IModuleInitializer
     {
         builder.Services.AddSingleton<IPasswordHasher, BCryptPasswordHasher>();
 
-        builder.Services.AddTransient<IUserPublisher, UserPublisher>();
+        //builder.Services.AddTransient<IUserPublisher, UserPublisher>();
 
         builder.Services.AddScoped<IUserRules, UserRules>();
         builder.Services.AddScoped<IProductRules, ProductRules>();

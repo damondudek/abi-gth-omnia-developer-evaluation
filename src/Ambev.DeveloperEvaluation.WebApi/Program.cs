@@ -41,17 +41,17 @@ public class Program
                 )
             );
 
-            var rabbitMqSettings = builder.Configuration.GetSection("RabbitMQ");
-            var connectionString = rabbitMqSettings["ConnectionString"];
-            var queueName = rabbitMqSettings["QueueName"];
+            //var rabbitMqSettings = builder.Configuration.GetSection("RabbitMQ");
+            //var connectionString = rabbitMqSettings["ConnectionString"];
+            //var queueName = rabbitMqSettings["QueueName"];
 
-            builder.Services.AddRebus(configure => configure
-                .Transport(t => t.UseRabbitMq(connectionString, queueName))
-                .Routing(r => r.TypeBased()
-                    .Map<UserUpdatedEvent>("cart-update-queue"))
-                .Serialization(s => s.UseSystemTextJson())
-            );
-            builder.Services.AutoRegisterHandlersFromAssemblyOf<UserUpdatedEventHandler>();
+            //builder.Services.AddRebus(configure => configure
+            //    .Transport(t => t.UseRabbitMq(connectionString, queueName))
+            //    .Routing(r => r.TypeBased()
+            //        .Map<UserUpdatedEvent>("cart-update-queue"))
+            //    .Serialization(s => s.UseSystemTextJson())
+            //);
+            //builder.Services.AutoRegisterHandlersFromAssemblyOf<UserUpdatedEventHandler>();
 
 
             builder.Services.AddJwtAuthentication(builder.Configuration);

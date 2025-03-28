@@ -1,7 +1,6 @@
 ﻿using Ambev.DeveloperEvaluation.Application.Carts.CreateCart;
 using Ambev.DeveloperEvaluation.Application.Carts.DeleteCart;
 using Ambev.DeveloperEvaluation.Application.Carts.GetCart;
-using Ambev.DeveloperEvaluation.Application.Carts.GetCarts;
 using Ambev.DeveloperEvaluation.Application.Carts.UpdateCart;
 using Ambev.DeveloperEvaluation.Domain.Models;
 using Ambev.DeveloperEvaluation.WebApi.Features.Common;
@@ -13,6 +12,8 @@ using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Ambev.DeveloperEvaluation.WebApi.Filters;
+using Ambev.DeveloperEvaluation.Application.Carts.GetCarts;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Carts;
 
@@ -98,16 +99,13 @@ public class CartsController : BaseController
     /// </summary>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>The cart details if found</returns>
+    [FilterQuery]
     [HttpGet]
     [ProducesResponseType(typeof(PaginatedResponse<GetCartResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetCarts([FromQuery] QueryParameters queryParameters, CancellationToken cancellationToken)
     {
-        var requestCommand = new GetCartsCommand()
-        {
-            PageNumber = queryParameters.PageNumber,
-            PageSize = queryParameters.PageSize,
-        };
+        var requestCommand = _mapper.Map<GetCartsCommand>(queryParameters);
         var responseCommand = await _mediator.Send(requestCommand, cancellationToken);
         var response = _mapper.Map<PaginatedResponse<GetCartResponse>>(responseCommand);
 

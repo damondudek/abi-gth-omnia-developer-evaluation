@@ -44,15 +44,15 @@ namespace Ambev.DeveloperEvaluation.Application.Carts.Common
             {
                 if (product.Quantity < minQuantityForDiscount)
                 {
-                    product.Discount = 0m;
+                    //product.Discount = 0m;
                     continue;
                 }
 
-                if (product.Quantity >= minQuantityForDiscount && product.Quantity <= maxQuantityForTier1)
-                    product.Discount = tier1Discount;
+                //if (product.Quantity >= minQuantityForDiscount && product.Quantity <= maxQuantityForTier1)
+                    //product.Discount = tier1Discount;
 
-                if (product.Quantity >= minQuantityForTier2 && product.Quantity <= maxQuantityLimit)
-                    product.Discount = tier2Discount;
+                //if (product.Quantity >= minQuantityForTier2 && product.Quantity <= maxQuantityLimit)
+                    //product.Discount = tier2Discount;
             }
         }
     }
