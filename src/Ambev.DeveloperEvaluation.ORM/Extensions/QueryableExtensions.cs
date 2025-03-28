@@ -7,7 +7,7 @@ namespace Ambev.DeveloperEvaluation.ORM.Extensions;
 
 public static class QueryableExtensions
 {
-    private static readonly char _contains = '*';
+    private static readonly char _likeOp = '*';
     private static readonly string _minOp = "_min";
     private static readonly string _maxOp = "_max";
 
@@ -106,22 +106,26 @@ public static class QueryableExtensions
                 continue;
 
             if (isRangeFilter)
-                ApplyRangeFilter(query, value, property, isMinRangeFilter);
+                query = ApplyRangeFilter(query, value, property, isMinRangeFilter);
             else
-                ApplyFilter(query, value, property);
+                query = ApplyFilter(query, value, property);
         }
 
         return query;
     }
 
-    private static void ApplyFilter<T>(IQueryable<T> query, string value, PropertyInfo property)
+    private static IQueryable<T> ApplyFilter<T>(IQueryable<T> query, string value, PropertyInfo property)
     {
-        if (value.EndsWith(_contains) || value.StartsWith(_contains))
+        if (value.StartsWith(_likeOp) || value.EndsWith(_likeOp))
         {
-            value = value.Trim(_contains);
-            query = query.Where(ContainsPredicate<T>(property.Name, value));
+            if (value.StartsWith(_likeOp) && value.EndsWith(_likeOp))
+                query = query.Where(ContainsPredicate<T>(property.Name, value));
+            else if (value.StartsWith(_likeOp))
+                query = query.Where(StartsWithPredicate<T>(property.Name, value));
+            else if (value.EndsWith(_likeOp))
+                query = query.Where(EndsWithPredicate<T>(property.Name, value));
         }
-        if (property.PropertyType == typeof(string))
+        else if (property.PropertyType == typeof(string))
             query = query.Where(EqualsPredicate<T>(property.Name, value));
         else if (property.PropertyType.IsEnum)
         {
@@ -138,9 +142,11 @@ public static class QueryableExtensions
             if (DateTime.TryParse(value, out var dateTimeValue))
                 query = query.Where(EqualsPredicate<T>(property.Name, dateTimeValue));
         }
+
+        return query;
     }
 
-    private static void ApplyRangeFilter<T>(IQueryable<T> query, string value, PropertyInfo property, bool isMin)
+    private static IQueryable<T> ApplyRangeFilter<T>(IQueryable<T> query, string value, PropertyInfo property, bool isMin)
     {
         if (property.PropertyType == typeof(DateTime) || property.PropertyType == typeof(DateTime?))
         {
@@ -169,6 +175,8 @@ public static class QueryableExtensions
                     query = query.Where(LessThanOrEqualPredicate<T>(property.Name, decimalValue));
             }
         }
+
+        return query;
     }
 
     private static Expression<Func<T, bool>> EqualsPredicate<T>(string propertyName, object value)
@@ -181,11 +189,32 @@ public static class QueryableExtensions
 
     private static Expression<Func<T, bool>> ContainsPredicate<T>(string propertyName, string value)
     {
+        value = value.Trim(_likeOp);
         var (parameter, property, constant) = GetExpressions<T>(propertyName, value);
-        var containsMethod = typeof(string).GetMethod("Contains", [typeof(string)]);
-        var contains = Expression.Call(property, containsMethod, constant);
+        var method = typeof(string).GetMethod("Contains", [typeof(string)]);
+        var expression = Expression.Call(property, method, constant);
         
-        return Expression.Lambda<Func<T, bool>>(contains, parameter);
+        return Expression.Lambda<Func<T, bool>>(expression, parameter);
+    }
+
+    private static Expression<Func<T, bool>> StartsWithPredicate<T>(string propertyName, string value)
+    {
+        value = value.Trim(_likeOp);
+        var (parameter, property, constant) = GetExpressions<T>(propertyName, value);
+        var method = typeof(string).GetMethod("StartsWith", [typeof(string)]);
+        var expression = Expression.Call(property, method, constant);
+
+        return Expression.Lambda<Func<T, bool>>(expression, parameter);
+    }
+
+    private static Expression<Func<T, bool>> EndsWithPredicate<T>(string propertyName, string value)
+    {
+        value = value.Trim(_likeOp);
+        var (parameter, property, constant) = GetExpressions<T>(propertyName, value);
+        var method = typeof(string).GetMethod("EndsWith", [typeof(string)]);
+        var expression = Expression.Call(property, method, constant);
+
+        return Expression.Lambda<Func<T, bool>>(expression, parameter);
     }
 
     private static Expression<Func<T, bool>> GreaterThanOrEqualPredicate<T>(string propertyName, object value)
