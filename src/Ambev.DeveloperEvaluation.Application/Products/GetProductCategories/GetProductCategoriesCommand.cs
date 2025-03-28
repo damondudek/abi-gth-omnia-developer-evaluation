@@ -1,5 +1,4 @@
-﻿using Ambev.DeveloperEvaluation.Application.Users.Common;
-using MediatR;
+﻿using MediatR;
 
 namespace Ambev.DeveloperEvaluation.Application.Products.GetProductCategories;
 
@@ -17,6 +16,6 @@ namespace Ambev.DeveloperEvaluation.Application.Products.GetProductCategories;
 /// <see cref="AbstractValidator{T}"/> to ensure that the fields are correctly 
 /// populated and follow the required rules.
 /// </remarks>
-public class GetProductCategoriesCommand : PaginatedCommand, IRequest<List<string>>
+public class GetProductCategoriesCommand : IRequest<List<string>>
 {
 }

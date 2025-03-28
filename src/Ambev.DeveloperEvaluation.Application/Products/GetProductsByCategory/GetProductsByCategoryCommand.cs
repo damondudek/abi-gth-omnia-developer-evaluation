@@ -1,14 +1,12 @@
+using Ambev.DeveloperEvaluation.Application.Common;
 using Ambev.DeveloperEvaluation.Application.Products.GetProduct;
-using Ambev.DeveloperEvaluation.Application.Users.Common;
-using Ambev.DeveloperEvaluation.Domain.Models;
-using MediatR;
 
 namespace Ambev.DeveloperEvaluation.Application.Products.GetProductsByCategory;
 
 /// <summary>
 /// Command for retrieving products by their category
 /// </summary>
-public class GetProductsByCategoryCommand : PaginatedCommand, IRequest<PaginatedResponse<GetProductResult>>
+public class GetProductsByCategoryCommand : PaginatedCommand<GetProductResult>
 {
     /// <summary>
     /// The category of the products to retrieve
