@@ -1,12 +1,15 @@
 ﻿using Ambev.DeveloperEvaluation.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace Ambev.DeveloperEvaluation.ORM.Extensions;
 
 public static class QueryableExtensions
 {
-    private static readonly char _coring = '*';
+    private static readonly char _contains = '*';
+    private static readonly string _minOp = "_min";
+    private static readonly string _maxOp = "_max";
 
     public static async Task<PaginatedList<T>> ToPagedListAsync<T>(this IQueryable<T> query, int pageNumber, int pageSize, string orderBy, IDictionary<string, string> filters, CancellationToken cancellationToken)
     {
@@ -86,56 +89,86 @@ public static class QueryableExtensions
 
         foreach (var filter in filters)
         {
-            var value = filter.Value;
-            var property = properties.FirstOrDefault(p => p.Name.Equals(filter.Key, StringComparison.OrdinalIgnoreCase));
+            var value = filter.Value.Trim();
+            var key = filter.Key.Trim();
+            var isRangeFilter = false;
+            var isMinRangeFilter = false;
+
+            if (key.StartsWith(_minOp) || filter.Key.StartsWith(_maxOp))
+            {
+                isRangeFilter = true;
+                isMinRangeFilter = key.StartsWith(_minOp);
+                key = key.Substring(_minOp.Length);
+            }
+
+            var property = properties.FirstOrDefault(p => p.Name.Equals(key, StringComparison.OrdinalIgnoreCase));
             if (property == null)
                 continue;
 
-            if (value.EndsWith(_coring) || value.StartsWith(_coring))
-            {
-                value = value.Trim(_coring);
-                query = query.Where(ContainsPredicate<T>(property.Name, value));
-            }
-            else if (property.PropertyType == typeof(string))
-                query = query.Where(EqualsPredicate<T>(property.Name, value));
-            else if (property.PropertyType.IsEnum)
-            {
-                var enumValue = Enum.Parse(property.PropertyType, value, true);
-                query = query.Where(EqualsPredicate<T>(property.Name, enumValue));
+            if (isRangeFilter)
+                ApplyRangeFilter(query, value, property, isMinRangeFilter);
+            else
+                ApplyFilter(query, value, property);
+        }
 
-            }
-            else if (property.PropertyType == typeof(bool))
+        return query;
+    }
+
+    private static void ApplyFilter<T>(IQueryable<T> query, string value, PropertyInfo property)
+    {
+        if (value.EndsWith(_contains) || value.StartsWith(_contains))
+        {
+            value = value.Trim(_contains);
+            query = query.Where(ContainsPredicate<T>(property.Name, value));
+        }
+        if (property.PropertyType == typeof(string))
+            query = query.Where(EqualsPredicate<T>(property.Name, value));
+        else if (property.PropertyType.IsEnum)
+        {
+            var enumValue = Enum.Parse(property.PropertyType, value, true);
+            query = query.Where(EqualsPredicate<T>(property.Name, enumValue));
+        }
+        else if (property.PropertyType == typeof(bool))
+        {
+            if (bool.TryParse(value, out var boolValue))
+                query = query.Where(EqualsPredicate<T>(property.Name, boolValue));
+        }
+        else if (property.PropertyType == typeof(DateTime) || property.PropertyType == typeof(DateTime?))
+        {
+            if (DateTime.TryParse(value, out var dateTimeValue))
+                query = query.Where(EqualsPredicate<T>(property.Name, dateTimeValue));
+        }
+    }
+
+    private static void ApplyRangeFilter<T>(IQueryable<T> query, string value, PropertyInfo property, bool isMin)
+    {
+        if (property.PropertyType == typeof(DateTime) || property.PropertyType == typeof(DateTime?))
+        {
+            if (DateTime.TryParse(value, out var dateTimeValue))
             {
-                if (bool.TryParse(value, out var boolValue))
-                    query = query.Where(EqualsPredicate<T>(property.Name, boolValue));
+                if (isMin)
+                    query = query.Where(GreaterThanOrEqualPredicate<T>(property.Name, dateTimeValue));
+                else
+                    query = query.Where(LessThanOrEqualPredicate<T>(property.Name, dateTimeValue));
             }
-            else if (property.PropertyType == typeof(DateTime) || property.PropertyType == typeof(DateTime?))
+        }
+        else if (property.PropertyType == typeof(decimal) ||
+                property.PropertyType == typeof(decimal?) ||
+                property.PropertyType == typeof(int) ||
+                property.PropertyType == typeof(int?) ||
+                property.PropertyType == typeof(double) ||
+                property.PropertyType == typeof(double?) ||
+                property.PropertyType == typeof(float) ||
+                property.PropertyType == typeof(float?))
+        {
+            if (decimal.TryParse(value, out var decimalValue))
             {
-                if (DateTime.TryParse(value, out var dateTimeValue))
-                    query = query.Where(EqualsPredicate<T>(property.Name, dateTimeValue));
-            }
-
-            var isMin = filter.Key.StartsWith("_min");
-            var isMax = filter.Key.StartsWith("_max");
-
-            if (!isMin && !isMax) continue;
-
-            if (property.PropertyType == typeof(DateTime) || property.PropertyType == typeof(DateTime?))
-                if (DateTime.TryParse(value, out var dateTimeValue))
-                {
-                    if (isMin)
-                        query = query.Where(GreaterThanOrEqualPredicate<T>(property.Name, dateTimeValue));
-                    else
-                        query = query.Where(LessThanOrEqualPredicate<T>(property.Name, dateTimeValue));
-                }
-            else if (decimal.TryParse(value, out var decimalValue))
                 if (isMin)
                     query = query.Where(GreaterThanOrEqualPredicate<T>(property.Name, decimalValue));
                 else
                     query = query.Where(LessThanOrEqualPredicate<T>(property.Name, decimalValue));
+            }
         }
-
-        return query;
     }
 
     private static Expression<Func<T, bool>> EqualsPredicate<T>(string propertyName, object value)
