@@ -10,12 +10,15 @@ public static class QueryableExtensions
     private static readonly char _likeOp = '*';
     private static readonly string _minOp = "_min";
     private static readonly string _maxOp = "_max";
+    private static readonly string _descOrder = " desc";
+    private static readonly string _ascOrder = " asc";
 
     public static async Task<PaginatedList<T>> ToPagedListAsync<T>(this IQueryable<T> query, int pageNumber, int pageSize, string orderBy, IDictionary<string, string> filters, CancellationToken cancellationToken)
     {
-        query = query.ApplyOrderBy(orderBy);
         query = query.ApplyFilters(filters);
         var count = await query.CountAsync(cancellationToken);
+        
+        query = query.ApplyOrderBy(orderBy);
         var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync(cancellationToken);
         var paginatedList = new PaginatedList<T>(items, count, pageNumber, pageSize);
 
@@ -38,22 +41,18 @@ public static class QueryableExtensions
 
             var propertyName = string.Empty;
             var orderDescending = false;
-            if (param.EndsWith(" desc", StringComparison.OrdinalIgnoreCase))
+            if (param.EndsWith(_descOrder, StringComparison.OrdinalIgnoreCase))
             {
                 propertyName = param[..^5];
                 orderDescending = true;
-            }
-
-            if (param.EndsWith(" asc", StringComparison.OrdinalIgnoreCase))
+            } else if (param.EndsWith(_ascOrder, StringComparison.OrdinalIgnoreCase))
                 propertyName = param[..^4];
 
             propertyName = propertyName.Trim();
             if (string.IsNullOrEmpty(propertyName))
                 continue;
 
-            var property = properties.FirstOrDefault(p =>
-                p.Name.Equals(propertyName, StringComparison.OrdinalIgnoreCase));
-
+            var property = properties.FirstOrDefault(p => p.Name.Equals(propertyName, StringComparison.OrdinalIgnoreCase));
             if (property == null) continue;
 
             query = orderDescending
@@ -63,25 +62,7 @@ public static class QueryableExtensions
 
         return query;
     }
-
-    private static IOrderedQueryable<T> OrderBy<T>(this IQueryable<T> source, string propertyName)
-    {
-        return source.OrderBy(ToLambda<T>(propertyName));
-    }
-
-    private static IOrderedQueryable<T> OrderByDescending<T>(this IQueryable<T> source, string propertyName)
-    {
-        return source.OrderByDescending(ToLambda<T>(propertyName));
-    }
-
-    private static Expression<Func<T, object>> ToLambda<T>(string propertyName)
-    {
-        var parameter = Expression.Parameter(typeof(T));
-        var property = Expression.Property(parameter, propertyName);
-        var propAsObject = Expression.Convert(property, typeof(object));
-        return Expression.Lambda<Func<T, object>>(propAsObject, parameter);
-    }
-
+        
     public static IQueryable<T> ApplyFilters<T>(this IQueryable<T> query, IDictionary<string, string> filters)
     {
         var entityType = typeof(T);
@@ -235,10 +216,24 @@ public static class QueryableExtensions
 
     private static (ParameterExpression, MemberExpression, ConstantExpression) GetExpressions<T>(string propertyName, object value)
     {
-        var parameter = Expression.Parameter(typeof(T), "x");
+        var parameter = Expression.Parameter(typeof(T));
         var property = Expression.Property(parameter, propertyName);
         var constant = Expression.Constant(value, property.Type);
 
         return (parameter, property, constant);
     }
+
+    private static Expression<Func<T, object>> ToLambda<T>(string propertyName)
+    {
+        var parameter = Expression.Parameter(typeof(T));
+        var property = Expression.Property(parameter, propertyName);
+        var propAsObject = Expression.Convert(property, typeof(object));
+        return Expression.Lambda<Func<T, object>>(propAsObject, parameter);
+    }
+
+    private static IOrderedQueryable<T> OrderBy<T>(this IQueryable<T> query, string propertyName)
+        => query.OrderBy(ToLambda<T>(propertyName));
+
+    private static IOrderedQueryable<T> OrderByDescending<T>(this IQueryable<T> query, string propertyName)
+        => query.OrderByDescending(ToLambda<T>(propertyName));
 }
