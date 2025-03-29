@@ -39,6 +39,6 @@ public class RepositoryFixture
             { "Tier2Discount", "0.20" }
         });
 
-        BusinessRuleRepository.GetConfigValueAsIntegerByConfigKey("MaxQuantityLimit").Returns(20);
+        BusinessRuleRepository.GetValueAsInt("MaxQuantityLimit").Returns(20);
     }
 }

@@ -1,4 +1,5 @@
 using Ambev.DeveloperEvaluation.Application.Products.GetProductsByCategory;
+using Ambev.DeveloperEvaluation.Domain.Models;
 using AutoMapper;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Products.GetProductsByCategory;
@@ -13,7 +14,6 @@ public class GetProductsByCategoryProfile : Profile
     /// </summary>
     public GetProductsByCategoryProfile()
     {
-        //CreateMap<string, GetProductsByCategoryCommand>()
-        //    .ConstructUsing(category => new GetProductsByCategoryCommand(category));
+        CreateMap<QueryParameters, GetProductsByCategoryCommand>();
     }
 }

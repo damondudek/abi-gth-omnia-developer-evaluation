@@ -13,7 +13,7 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities;
 /// </summary>
 public class User : BaseEntity, IUser
 {
-    //public ICollection<UserAddress> Addresses { get; set; }
+    public ICollection<Cart> Carts { get; set; } = [];
 
     /// <summary>
     /// Gets the user's full name.

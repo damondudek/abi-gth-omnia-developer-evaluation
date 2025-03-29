@@ -20,6 +20,12 @@ public class CartProductConfiguration : IEntityTypeConfiguration<CartProduct>
             .HasOne<Cart>()
             .WithMany(c => c.Products)
             .HasForeignKey(cp => cp.CartId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder
+            .HasOne<Product>()
+            .WithMany(p => p.CartProducts)
+            .HasForeignKey(cp => cp.ProductId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

@@ -27,8 +27,13 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities
         public int Quantity { get; set; }
 
         /// <summary>
+        /// Gets or sets the price of the product in the cart.
+        /// </summary>
+        public decimal Price { get; set; }
+
+        /// <summary>
         /// Gets or sets the discount of the product in the cart.
         /// </summary>
-        //public decimal Discount { get; set; }
+        public decimal Discount { get; set; }
     }
 }

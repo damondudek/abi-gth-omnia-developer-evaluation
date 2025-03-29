@@ -1,3 +1,4 @@
+using Ambev.DeveloperEvaluation.Application.Carts.Common;
 using Ambev.DeveloperEvaluation.Application.Carts.CreateCart;
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
@@ -15,6 +16,7 @@ namespace Ambev.DeveloperEvaluation.Unit.Application;
 public class CreateCartHandlerTests
 {
     private readonly ICartRepository _cartRepository;
+    private readonly ICartRules _cartRules;
     private readonly IMapper _mapper;
     private readonly CreateCartHandler _handler;
 
@@ -26,7 +28,8 @@ public class CreateCartHandlerTests
     {
         _cartRepository = Substitute.For<ICartRepository>();
         _mapper = Substitute.For<IMapper>();
-        _handler = new CreateCartHandler(_cartRepository, _mapper);
+        _cartRules = Substitute.For<ICartRules>();
+        _handler = new CreateCartHandler(_cartRepository, _mapper, _cartRules);
     }
 
     /// <summary>

@@ -14,6 +14,6 @@ public interface IBusinessRuleRepository
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>The business rule if found, null otherwise.</returns>
     BusinessRule? GetByConfigKey(string configKey);
-    int GetConfigValueAsIntegerByConfigKey(string configKey);
+    int GetValueAsInt(string configKey);
     IDictionary<string, string> GetAll();
 }

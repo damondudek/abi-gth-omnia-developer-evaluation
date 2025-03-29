@@ -16,8 +16,8 @@ public class BusinessRuleRepository : IBusinessRuleRepository
         _businessRules =
         [
             new BusinessRule { ConfigKey = "MinQuantityForDiscount", ConfigValue = "4" },
-            new BusinessRule { ConfigKey = "MaxQuantityForDiscountTier", ConfigValue = "9" },
-            new BusinessRule { ConfigKey = "MinQuantityForDiscountTier", ConfigValue = "10" },
+            new BusinessRule { ConfigKey = "MaxQuantityForDiscountTier1", ConfigValue = "9" },
+            new BusinessRule { ConfigKey = "MinQuantityForDiscountTier2", ConfigValue = "10" },
             new BusinessRule { ConfigKey = "MaxQuantityLimit", ConfigValue = "20" },
             new BusinessRule { ConfigKey = "Tier1Discount", ConfigValue = "0.10" },
             new BusinessRule { ConfigKey = "Tier2Discount", ConfigValue = "0.20" }
@@ -27,7 +27,7 @@ public class BusinessRuleRepository : IBusinessRuleRepository
     public BusinessRule? GetByConfigKey(string configKey)
         => _businessRules.FirstOrDefault(rule => rule.ConfigKey == configKey);
 
-    public int GetConfigValueAsIntegerByConfigKey(string configKey)
+    public int GetValueAsInt(string configKey)
     {
         var rule = _businessRules.FirstOrDefault(rule => rule.ConfigKey == configKey);
         int.TryParse(rule?.ConfigValue, CultureInfo.InvariantCulture, out var ruleValue);

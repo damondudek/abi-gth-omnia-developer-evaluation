@@ -9,6 +9,11 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities;
 public class Product : BaseEntity
 {
     /// <summary>
+    /// Gets or sets the list of products in the cart.
+    /// </summary>
+    public ICollection<CartProduct> CartProducts { get; set; } = new List<CartProduct>();
+
+    /// <summary>
     /// Gets or sets the title of the product.
     /// Must not be null or empty.
     /// </summary>

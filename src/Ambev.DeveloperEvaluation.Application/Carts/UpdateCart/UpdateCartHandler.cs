@@ -13,16 +13,18 @@ public class UpdateCartHandler : IRequestHandler<UpdateCartCommand, UpdateCartRe
 {
     private readonly ICartRepository _cartRepository;
     private readonly IMapper _mapper;
+    private readonly ICartRules _cartRules;
 
     /// <summary>
     /// Initializes a new instance of UpdateCartHandler
     /// </summary>
     /// <param name="cartRepository">The cart repository</param>
     /// <param name="mapper">The AutoMapper instance</param>
-    public UpdateCartHandler(ICartRepository cartRepository, IMapper mapper)
+    public UpdateCartHandler(ICartRepository cartRepository, IMapper mapper, ICartRules cartRules)
     {
         _cartRepository = cartRepository;
         _mapper = mapper;
+        _cartRules = cartRules;
     }
 
     /// <summary>
@@ -41,6 +43,7 @@ public class UpdateCartHandler : IRequestHandler<UpdateCartCommand, UpdateCartRe
         //     throw new ValidationException(validationResult.Errors);
 
         var cart = _mapper.Map<Cart>(command);
+        _cartRules.ValidatePurchase(cart.Products.ToList());
         var updatedCart = await _cartRepository.UpdateAsync(cart, cancellationToken);
         var result = _mapper.Map<UpdateCartResult>(updatedCart);
 
