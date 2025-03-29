@@ -22,6 +22,11 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities
         public Guid ProductId { get; set; }
 
         /// <summary>
+        /// Gets or sets the product`s title.
+        /// </summary>
+        public string ProductTitle { get; set; } = string.Empty;
+
+        /// <summary>
         /// Gets or sets the quantity of the product in the cart.
         /// </summary>
         public int Quantity { get; set; }

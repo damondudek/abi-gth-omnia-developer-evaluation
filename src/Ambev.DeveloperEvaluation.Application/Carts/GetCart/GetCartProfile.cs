@@ -14,10 +14,13 @@ public class GetCartProfile : Profile
     /// </summary>
     public GetCartProfile()
     {
-        CreateMap<Cart, GetCartResult>();
+        CreateMap<Cart, GetCartResult>()
+            .ForMember(d => d.Date, opt => opt.MapFrom(src => src.CreatedAt));
+
         CreateMap<PaginatedList<Cart>, PaginatedResponse<GetCartResult>>()
             .ForMember(d => d.Data, opt => opt.MapFrom(src => src.ToList()))
             .ForMember(d => d.TotalItems, opt => opt.MapFrom(src => src.TotalCount));
+        
         CreateMap<CartProduct, GetCartProductResult>();
     }
 }

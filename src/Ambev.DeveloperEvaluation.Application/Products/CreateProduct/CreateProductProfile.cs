@@ -19,6 +19,5 @@ public class CreateProductProfile : Profile
         CreateMap<Product, CreateProductResult>()
             .ForPath(d => d.Rating.Rate, opt => opt.MapFrom(src => src.AverageRating))
             .ForPath(d => d.Rating.Count, opt => opt.MapFrom(src => src.RatingCount));
-            
     }
 }

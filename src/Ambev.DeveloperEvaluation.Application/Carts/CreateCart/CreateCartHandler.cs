@@ -45,6 +45,7 @@ public class CreateCartHandler : IRequestHandler<CreateCartCommand, CreateCartRe
 
         var cart = _mapper.Map<Cart>(command);
         _cartRules.ValidatePurchase(cart.Products.ToList());
+
         var createdCart = await _cartRepository.CreateAsync(cart, cancellationToken);
         var result = _mapper.Map<CreateCartResult>(createdCart);
         return result;

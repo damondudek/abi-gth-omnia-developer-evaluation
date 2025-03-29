@@ -14,6 +14,11 @@ public class Cart : BaseEntity
     public Guid UserId { get; set; }
 
     /// <summary>
+    /// Gets or sets the the user`s full name associated with the cart.
+    /// </summary>
+    public string UserFullName { get; set; } = string.Empty;
+
+    /// <summary>
     /// Gets or sets the list of products in the cart.
     /// </summary>
     public ICollection<CartProduct> Products { get; set; } = new List<CartProduct>();

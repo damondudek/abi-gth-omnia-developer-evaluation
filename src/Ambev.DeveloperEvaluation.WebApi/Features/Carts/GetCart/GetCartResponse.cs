@@ -16,6 +16,11 @@ public class GetCartResponse
     public Guid UserId { get; set; }
 
     /// <summary>
+    /// The user`s full name associated with the cart
+    /// </summary>
+    public string UserFullName { get; set; } = string.Empty;
+
+    /// <summary>
     /// The date the cart was created or updated
     /// </summary>
     public DateTime Date { get; set; }
@@ -35,6 +40,11 @@ public class GetCartProductResponse
     /// The unique identifier of the product
     /// </summary>
     public Guid ProductId { get; set; }
+
+    /// <summary>
+    /// The identifier of the product`s title
+    /// </summary>
+    public string ProductTitle { get; set; } = string.Empty;
 
     /// <summary>
     /// The quantity of the product in the cart

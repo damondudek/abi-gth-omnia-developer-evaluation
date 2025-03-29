@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 namespace Ambev.DeveloperEvaluation.Application.Carts.GetCart;
 
 /// <summary>
@@ -17,6 +14,11 @@ public class GetCartResult
     /// The unique identifier of the user associated with the cart
     /// </summary>
     public Guid UserId { get; set; }
+
+    /// <summary>
+    /// The user`s full name associated with the cart
+    /// </summary>
+    public string UserFullName { get; set; } = string.Empty;
 
     /// <summary>
     /// The date of the cart
@@ -38,6 +40,11 @@ public class GetCartProductResult
     /// The unique identifier of the product
     /// </summary>
     public Guid ProductId { get; set; }
+
+    /// <summary>
+    /// The identifier of the product`s title
+    /// </summary>
+    public string ProductTitle { get; set; } = string.Empty;
 
     /// <summary>
     /// The quantity of the product

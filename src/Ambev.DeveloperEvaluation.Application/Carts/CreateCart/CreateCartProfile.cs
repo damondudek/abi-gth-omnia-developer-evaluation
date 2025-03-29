@@ -1,4 +1,5 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Entities;
+﻿using Ambev.DeveloperEvaluation.Application.Carts.GetCart;
+using Ambev.DeveloperEvaluation.Domain.Entities;
 using AutoMapper;
 
 namespace Ambev.DeveloperEvaluation.Application.Carts.CreateCart;
@@ -17,6 +18,6 @@ public class CreateCartProfile : Profile
         CreateMap<CreateCartProductCommand, CartProduct>();
         CreateMap<Cart, CreateCartResult>()
             .ForMember(d => d.Date, opt => opt.MapFrom(src => src.CreatedAt));
-        CreateMap<CartProduct, CreateCartProductResult>();
+        CreateMap<CartProduct, GetCartProductResult>();
     }
 }

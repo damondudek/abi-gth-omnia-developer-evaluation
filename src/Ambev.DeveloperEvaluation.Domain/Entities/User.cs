@@ -16,10 +16,22 @@ public class User : BaseEntity, IUser
     public ICollection<Cart> Carts { get; set; } = [];
 
     /// <summary>
-    /// Gets the user's full name.
-    /// Must not be null or empty and should contain both first and last names.
+    /// Gets the user's username.
+    /// Must not be null or empty and should contain the username for login.
     /// </summary>
     public string Username { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets the user's first name.
+    /// Must not be null or empty and should contain first name.
+    /// </summary>
+    public string FirstName { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets the user's last name.
+    /// Must not be null or empty and should contain last name.
+    /// </summary>
+    public string LastName { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets the user's email address.
