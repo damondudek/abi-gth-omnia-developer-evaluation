@@ -46,5 +46,10 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities
             ProductTitle = product.Title;
             Price = product.Price;
         }
+
+        public void SetUpdatedAt()
+        {
+            UpdatedAt = DateTime.UtcNow;
+        }
     }
 }

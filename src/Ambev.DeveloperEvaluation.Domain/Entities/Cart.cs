@@ -23,6 +23,12 @@ public class Cart : BaseEntity
     /// </summary>
     public ICollection<CartProduct> Products { get; set; } = new List<CartProduct>();
 
+    public void SetProductsUpdatedAt()
+    {
+        foreach (var cartProduct in Products)
+            cartProduct.SetUpdatedAt();
+    }
+
     /// <summary>
     /// Validates the cart entity using business rules.
     /// </summary>

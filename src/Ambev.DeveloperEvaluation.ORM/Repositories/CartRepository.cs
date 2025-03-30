@@ -22,6 +22,31 @@ public class CartRepository : BaseRepository<Cart, DefaultContext>, ICartReposit
         => _context.Carts.Where(c => c.Id == id).AsNoTracking().Include(c => c.Products).FirstOrDefaultAsync(cancellationToken);
 
     /// <summary>
+    /// Updates an existing cart in the database
+    /// </summary>
+    public override async Task<Cart> UpdateAsync(Cart cart, CancellationToken cancellationToken = default)
+    {
+        var existingItems = await _context.CartProducts
+            .Where(cp => cp.CartId == cart.Id)
+            .ToListAsync(cancellationToken);
+
+        var itemsToRemove = existingItems
+            .Where(ei => !cart.Products.Any(cp => cp.Id == ei.Id))
+            .ToList();
+
+        if (itemsToRemove.Count != 0)
+            _context.CartProducts.RemoveRange(itemsToRemove);
+
+        cart.UpdatedAt = DateTime.UtcNow;
+        cart.SetProductsUpdatedAt();
+
+        _context.Carts.Update(cart);
+        await _context.SaveChangesAsync(cancellationToken);
+
+        return cart;
+    }
+
+    /// <summary>
     /// Retrieves all carts from the database
     /// </summary>
     public Task<List<Cart>> GetAllAsync(CancellationToken cancellationToken = default)

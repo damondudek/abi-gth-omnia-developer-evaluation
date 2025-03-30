@@ -40,7 +40,7 @@ public class BaseRepository<TEntity, TContext> where TEntity : class where TCont
     /// <summary>
     /// Updates an existing entity in the database
     /// </summary>
-    public async Task<TEntity> UpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
+    public virtual async Task<TEntity> UpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
         if (entity is BaseEntity baseEntity)
         {
