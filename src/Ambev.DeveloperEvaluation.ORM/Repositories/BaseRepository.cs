@@ -66,7 +66,7 @@ public class BaseRepository<TEntity, TContext> where TEntity : class where TCont
     /// <summary>
     /// Retrieves an entity by its unique identifier
     /// </summary>
-    public Task<TEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public virtual Task<TEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
         => _dbSet.AsNoTracking().FirstOrDefaultAsync(entity => EF.Property<Guid>(entity, "Id") == id, cancellationToken);
 
     /// <summary>

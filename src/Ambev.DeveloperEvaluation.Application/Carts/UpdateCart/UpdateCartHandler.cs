@@ -2,6 +2,7 @@
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using AutoMapper;
+using FluentValidation;
 using MediatR;
 
 namespace Ambev.DeveloperEvaluation.Application.Carts.UpdateCart;
@@ -35,15 +36,20 @@ public class UpdateCartHandler : IRequestHandler<UpdateCartCommand, UpdateCartRe
     /// <returns>The updated cart details</returns>
     public async Task<UpdateCartResult> Handle(UpdateCartCommand command, CancellationToken cancellationToken)
     {
-        // Uncomment and implement validation logic if necessary
-        // var validator = new UpdateCartCommandValidator();
-        // var validationResult = await validator.ValidateAsync(command, cancellationToken);
+        var validator = new UpdateCartCommandValidator();
+        var validationResult = await validator.ValidateAsync(command, cancellationToken);
 
-        // if (!validationResult.IsValid)
-        //     throw new ValidationException(validationResult.Errors);
+        if (!validationResult.IsValid)
+            throw new ValidationException(validationResult.Errors);
 
         var cart = _mapper.Map<Cart>(command);
-        _cartRules.ValidatePurchase(cart.Products.ToList());
+        _cartRules.ValidatePurchase(cart.Products);
+        await _cartRules.UpdateCartProductsInfo(cart.Products, cancellationToken);
+
+        var existingCart = await _cartRepository.GetByIdAsync(cart.Id, cancellationToken);
+        if (existingCart == null)
+            throw new Exception($"Cart {cart.Id} not found.");
+
         var updatedCart = await _cartRepository.UpdateAsync(cart, cancellationToken);
         var result = _mapper.Map<UpdateCartResult>(updatedCart);
 

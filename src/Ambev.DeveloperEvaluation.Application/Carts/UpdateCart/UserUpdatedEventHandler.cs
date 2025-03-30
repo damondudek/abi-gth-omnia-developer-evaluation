@@ -1,26 +1,31 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Events;
-using Ambev.DeveloperEvaluation.Domain.Repositories;
-using Rebus.Handlers;
+﻿using FluentValidation;
 
-namespace Ambev.DeveloperEvaluation.Application.Carts.UpdateCart
+namespace Ambev.DeveloperEvaluation.Application.Carts.UpdateCart;
+
+/// <summary>
+/// Validator for UpdateCartCommand that defines validation rules for cart update operations.
+/// </summary>
+public class UpdateCartCommandValidator : AbstractValidator<UpdateCartCommand>
 {
-    //public class UserUpdatedEventHandler : IHandleMessages<UserUpdatedEvent>
-    //{
-    //    private readonly ICartRepository _cartRepository;
-
-    //    public UserUpdatedEventHandler(ICartRepository cartRepository)
-    //    {
-    //        _cartRepository = cartRepository;
-    //    }
-
-    //    public async Task Handle(UserUpdatedEvent message)
-    //    {
-    //        var carts = await _cartRepository.GetByUserIdAsync(message.UserId);
-    //        foreach (var cart in carts)
-    //        {
-    //            //cart.UserName = message.User.Username;
-    //            await _cartRepository.UpdateAsync(cart);
-    //        }
-    //    }
-    //}
+    /// <summary>
+    /// Initializes a new instance of the UpdateCartCommandValidator with defined validation rules.
+    /// </summary>
+    /// <remarks>
+    /// Validation rules include:
+    /// <list type="bullet">
+    /// <item><description>UserId: Must be valid and not null.</description></item>
+    /// <item><description>Products: At least one product must exist in the cart.</description></item>
+    /// <item><description>Each Product: Must include valid ProductId, Quantity, and optionally allow adjustments to Price.</description></item>
+    /// </list>
+    /// </remarks>
+    public UpdateCartCommandValidator()
+    {
+        RuleFor(cart => cart.UserId).NotNull().WithMessage("UserId must be informed."); ;
+        RuleFor(cart => cart.Products).NotEmpty().WithMessage("The cart must contain at least one product.");
+        RuleForEach(cart => cart.Products).ChildRules(product =>
+        {
+            product.RuleFor(p => p.ProductId).NotNull().WithMessage("ProductId must be informed.");
+            product.RuleFor(p => p.Quantity).GreaterThan(0).WithMessage("Quantity must be greater than zero.");
+        });
+    }
 }

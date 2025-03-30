@@ -34,18 +34,9 @@ public class CreateCartHandler : IRequestHandler<CreateCartCommand, CreateCartRe
         if (!validationResult.IsValid)
             throw new ValidationException(validationResult.Errors);
 
-        var productIds = command.Products.Select(p => p.ProductId).Distinct().ToList();
-        var products = await _productRepository.GetByIdsAsync(productIds, cancellationToken);
-        
         var cart = _mapper.Map<Cart>(command);
-
-        foreach (var cartProduct in cart.Products)
-        {
-            var product = products.FirstOrDefault(p => p.Id == cartProduct.ProductId) ?? throw new ValidationException($"Product {cartProduct.ProductId} not found");
-            cartProduct.UpdateProductInfo(product);
-        }
-
-        _cartRules.ValidatePurchase(cart.Products.ToList());
+        _cartRules.ValidatePurchase(cart.Products);
+        await _cartRules.UpdateCartProductsInfo(cart.Products, cancellationToken);
 
         var createdCart = await _cartRepository.CreateAsync(cart, cancellationToken);
         var result = _mapper.Map<CreateCartResult>(createdCart);

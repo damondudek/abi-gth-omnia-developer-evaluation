@@ -1,10 +1,10 @@
-using Ambev.DeveloperEvaluation.WebApi.Features.Carts.CreateCart;
+using Ambev.DeveloperEvaluation.WebApi.Features.Carts.GetCart;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Carts.UpdateCart;
 
 /// <summary>
 /// API response model for UpdateCart operation
 /// </summary>
-public class UpdateCartResponse : CreateCartResponse
+public class UpdateCartResponse : GetCartResponse
 {
 }

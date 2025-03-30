@@ -47,6 +47,11 @@ public class GetCartProductResponse
     public string ProductTitle { get; set; } = string.Empty;
 
     /// <summary>
+    /// The identifier of the product`s price
+    /// </summary>
+    public decimal Price { get; set; }
+
+    /// <summary>
     /// The quantity of the product in the cart
     /// </summary>
     public int Quantity { get; set; }

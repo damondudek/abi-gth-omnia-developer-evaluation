@@ -16,6 +16,12 @@ public class CartRepository : BaseRepository<Cart, DefaultContext>, ICartReposit
     }
 
     /// <summary>
+    /// Retrieves an entity by its unique identifier
+    /// </summary>
+    public override Task<Cart?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+        => _context.Carts.Where(c => c.Id == id).AsNoTracking().Include(c => c.Products).FirstOrDefaultAsync(cancellationToken);
+
+    /// <summary>
     /// Retrieves all carts from the database
     /// </summary>
     public Task<List<Cart>> GetAllAsync(CancellationToken cancellationToken = default)

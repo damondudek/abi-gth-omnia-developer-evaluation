@@ -14,12 +14,19 @@ public class RepositoryFixture
     public IBusinessRuleRepository BusinessRuleRepository { get; private set; }
 
     /// <summary>
+    /// Gets the mock instance of <see cref="IBusinessRuleRepository"/>.
+    /// </summary>
+    public IProductRepository ProductRepository { get; private set; }
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="RepositoryFixture"/> class.
     /// Sets up mock repositories for testing.
     /// </summary>
     public RepositoryFixture()
     {
         BusinessRuleRepository = Substitute.For<IBusinessRuleRepository>();
+
+        ProductRepository = Substitute.For<IProductRepository>();
 
         SetupDefaultBusinessRules();
     }

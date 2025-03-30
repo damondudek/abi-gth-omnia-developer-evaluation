@@ -16,6 +16,7 @@ namespace Ambev.DeveloperEvaluation.Unit.Application;
 public class CreateCartHandlerTests
 {
     private readonly ICartRepository _cartRepository;
+    private readonly IProductRepository _productRepository;
     private readonly ICartRules _cartRules;
     private readonly IMapper _mapper;
     private readonly CreateCartHandler _handler;
@@ -27,9 +28,10 @@ public class CreateCartHandlerTests
     public CreateCartHandlerTests()
     {
         _cartRepository = Substitute.For<ICartRepository>();
+        _productRepository = Substitute.For<IProductRepository>();
         _mapper = Substitute.For<IMapper>();
         _cartRules = Substitute.For<ICartRules>();
-        _handler = new CreateCartHandler(_cartRepository, _mapper, _cartRules);
+        _handler = new CreateCartHandler(_cartRepository, _productRepository, _mapper, _cartRules);
     }
 
     /// <summary>

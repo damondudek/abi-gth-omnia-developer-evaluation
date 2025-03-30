@@ -23,7 +23,7 @@ public class CartRulesTests : IClassFixture<RepositoryFixture>
     public CartRulesTests(RepositoryFixture repositoryFixture)
     {
         _repositoryFixture = repositoryFixture;
-        _cartRules = new CartRules(_repositoryFixture.BusinessRuleRepository);
+        _cartRules = new CartRules(_repositoryFixture.BusinessRuleRepository, _repositoryFixture.ProductRepository);
     }
 
     /// <summary>
