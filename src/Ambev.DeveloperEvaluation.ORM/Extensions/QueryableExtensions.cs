@@ -50,9 +50,7 @@ public static class QueryableExtensions
                 orderDescending = true;
             }
             else if (param.EndsWith(_ascOrder, StringComparison.OrdinalIgnoreCase))
-            {
                 propertyName = param[..^4].Trim();
-            }
 
             var property = properties.FirstOrDefault(p =>
                 p.Name.Equals(propertyName, StringComparison.OrdinalIgnoreCase));
@@ -79,7 +77,7 @@ public static class QueryableExtensions
 
     public static IQueryable<T> ApplyFilters<T>(this IQueryable<T> query, IDictionary<string, string> filters)
     {
-        if (filters is null)
+        if (filters == null || filters.Count == 0)
             return query;
 
         var entityType = typeof(T);
@@ -87,26 +85,25 @@ public static class QueryableExtensions
 
         foreach (var filter in filters)
         {
-            var value = filter.Value.Trim();
-            var key = filter.Key.Trim();
-            var isRangeFilter = false;
-            var isMinRangeFilter = false;
+            var key = filter.Key?.Trim();
+            var value = filter.Value?.Trim();
 
-            if (key.StartsWith(_minOp) || filter.Key.StartsWith(_maxOp))
-            {
-                isRangeFilter = true;
-                isMinRangeFilter = key.StartsWith(_minOp);
+            if (string.IsNullOrWhiteSpace(key) || string.IsNullOrWhiteSpace(value))
+                continue;
+
+            var isRangeFilter = key.StartsWith(_minOp) || key.StartsWith(_maxOp);
+            var isMinRangeFilter = key.StartsWith(_minOp);
+
+            if (isRangeFilter)
                 key = key[_minOp.Length..];
-            }
 
             var property = properties.FirstOrDefault(p => p.Name.Equals(key, StringComparison.OrdinalIgnoreCase));
             if (property == null)
                 continue;
 
-            if (isRangeFilter)
-                query = ApplyRangeFilter(query, value, property, isMinRangeFilter);
-            else
-                query = ApplyFilter(query, value, property);
+            query = isRangeFilter
+                ? ApplyRangeFilter(query, value, property, isMinRangeFilter)
+                : ApplyFilter(query, value, property);
         }
 
         return query;
@@ -115,14 +112,7 @@ public static class QueryableExtensions
     private static IQueryable<T> ApplyFilter<T>(IQueryable<T> query, string value, PropertyInfo property)
     {
         if (value.StartsWith(_likeOp) || value.EndsWith(_likeOp))
-        {
-            if (value.StartsWith(_likeOp) && value.EndsWith(_likeOp))
-                query = query.Where(ContainsPredicate<T>(property.Name, value));
-            else if (value.StartsWith(_likeOp))
-                query = query.Where(EndsWithPredicate<T>(property.Name, value));
-            else if (value.EndsWith(_likeOp))
-                query = query.Where(StartsWithPredicate<T>(property.Name, value));
-        }
+            query = ApplyLikeFilter(query, value, property);
         else if (property.PropertyType == typeof(string))
             query = query.Where(EqualsPredicate<T>(property.Name, value));
         else if (property.PropertyType.IsEnum)
@@ -144,37 +134,62 @@ public static class QueryableExtensions
         return query;
     }
 
+    private static IQueryable<T> ApplyLikeFilter<T>(IQueryable<T> query, string value, PropertyInfo property)
+    {
+        value = value.Trim();
+        if (value.StartsWith(_likeOp) && value.EndsWith(_likeOp))
+            query = query.Where(ContainsPredicate<T>(property.Name, value));
+        else if (value.StartsWith(_likeOp))
+            query = query.Where(EndsWithPredicate<T>(property.Name, value));
+        else if (value.EndsWith(_likeOp))
+            query = query.Where(StartsWithPredicate<T>(property.Name, value));
+
+        return query;
+    }
+
     private static IQueryable<T> ApplyRangeFilter<T>(IQueryable<T> query, string value, PropertyInfo property, bool isMin)
     {
-        if (property.PropertyType == typeof(DateTime) || property.PropertyType == typeof(DateTime?))
+        if (IsDateTimeType(property.PropertyType))
         {
             if (DateTime.TryParse(value, out var dateTimeValue))
             {
-                if (isMin)
-                    query = query.Where(GreaterThanOrEqualPredicate<T>(property.Name, dateTimeValue));
-                else
-                    query = query.Where(LessThanOrEqualPredicate<T>(property.Name, dateTimeValue));
+                query = isMin
+                    ? query.Where(GreaterThanOrEqualPredicate<T>(property.Name, dateTimeValue))
+                    : query.Where(LessThanOrEqualPredicate<T>(property.Name, dateTimeValue));
             }
         }
-        else if (property.PropertyType == typeof(decimal) ||
-                property.PropertyType == typeof(decimal?) ||
-                property.PropertyType == typeof(int) ||
-                property.PropertyType == typeof(int?) ||
-                property.PropertyType == typeof(double) ||
-                property.PropertyType == typeof(double?) ||
-                property.PropertyType == typeof(float) ||
-                property.PropertyType == typeof(float?))
+        else if (IsNumericType(property.PropertyType))
         {
             if (decimal.TryParse(value, out var decimalValue))
             {
-                if (isMin)
-                    query = query.Where(GreaterThanOrEqualPredicate<T>(property.Name, decimalValue));
-                else
-                    query = query.Where(LessThanOrEqualPredicate<T>(property.Name, decimalValue));
+                query = isMin
+                    ? query.Where(GreaterThanOrEqualPredicate<T>(property.Name, decimalValue))
+                    : query.Where(LessThanOrEqualPredicate<T>(property.Name, decimalValue));
             }
         }
 
         return query;
+    }
+
+    private static bool IsNumericType(Type type)
+    {
+        var numericTypes = new[]
+        {
+            typeof(int), typeof(int?),
+            typeof(decimal), typeof(decimal?),
+            typeof(double), typeof(double?),
+            typeof(float), typeof(float?)
+        };
+
+        return numericTypes.Contains(type);
+    }
+
+
+    private static bool IsDateTimeType(Type type)
+    {
+        var isDateTimeType = type == typeof(DateTime) || type == typeof(DateTime?);
+
+        return isDateTimeType;
     }
 
     private static Expression<Func<T, bool>> EqualsPredicate<T>(string propertyName, object value)
@@ -189,7 +204,7 @@ public static class QueryableExtensions
     {
         value = value.Trim(_likeOp);
         var (parameter, property, constant) = GetExpressions<T>(propertyName, value);
-        var method = typeof(string).GetMethod("Contains", [typeof(string)]);
+        var method = GetMethodInfo(nameof(string.Contains));
         var expression = Expression.Call(property, method, constant);
         
         return Expression.Lambda<Func<T, bool>>(expression, parameter);
@@ -199,7 +214,7 @@ public static class QueryableExtensions
     {
         value = value.Trim(_likeOp);
         var (parameter, property, constant) = GetExpressions<T>(propertyName, value);
-        var method = typeof(string).GetMethod("StartsWith", [typeof(string)]);
+        var method = GetMethodInfo(nameof(string.StartsWith));
         var expression = Expression.Call(property, method, constant);
 
         return Expression.Lambda<Func<T, bool>>(expression, parameter);
@@ -209,10 +224,17 @@ public static class QueryableExtensions
     {
         value = value.Trim(_likeOp);
         var (parameter, property, constant) = GetExpressions<T>(propertyName, value);
-        var method = typeof(string).GetMethod("EndsWith", [typeof(string)]);
+        var method = GetMethodInfo(nameof(string.EndsWith));
         var expression = Expression.Call(property, method, constant);
 
         return Expression.Lambda<Func<T, bool>>(expression, parameter);
+    }
+
+    private static MethodInfo GetMethodInfo(string methodName)
+    {
+        var method = typeof(string).GetMethod(methodName, [typeof(string)])!;
+
+        return method;
     }
 
     private static Expression<Func<T, bool>> GreaterThanOrEqualPredicate<T>(string propertyName, object value)
