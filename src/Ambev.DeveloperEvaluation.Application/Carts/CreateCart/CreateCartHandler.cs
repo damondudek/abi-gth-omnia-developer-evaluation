@@ -7,34 +7,25 @@ using MediatR;
 
 namespace Ambev.DeveloperEvaluation.Application.Carts.CreateCart;
 
-/// <summary>
-/// Handler for processing CreateCartCommand requests
-/// </summary>
 public class CreateCartHandler : IRequestHandler<CreateCartCommand, CreateCartResult>
 {
     private readonly ICartRepository _cartRepository;
+    private readonly IProductRepository _productRepository;
     private readonly IMapper _mapper;
     private readonly ICartRules _cartRules;
 
-    /// <summary>
-    /// Initializes a new instance of CreateCartHandler
-    /// </summary>
-    /// <param name="cartRepository">The cart repository</param>
-    /// <param name="mapper">The AutoMapper instance</param>
-    /// <param name="validator">The validator for CreateCartCommand</param>
-    public CreateCartHandler(ICartRepository cartRepository, IMapper mapper, ICartRules cartRules)
+    public CreateCartHandler(
+        ICartRepository cartRepository,
+        IProductRepository productRepository,
+        IMapper mapper,
+        ICartRules cartRules)
     {
         _cartRepository = cartRepository;
+        _productRepository = productRepository;
         _mapper = mapper;
         _cartRules = cartRules;
     }
 
-    /// <summary>
-    /// Handles the CreateCartCommand request
-    /// </summary>
-    /// <param name="command">The CreateCart command</param>
-    /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>The created cart details</returns>
     public async Task<CreateCartResult> Handle(CreateCartCommand command, CancellationToken cancellationToken)
     {
         var validator = new CreateCartCommandValidator();
@@ -43,7 +34,17 @@ public class CreateCartHandler : IRequestHandler<CreateCartCommand, CreateCartRe
         if (!validationResult.IsValid)
             throw new ValidationException(validationResult.Errors);
 
+        var productIds = command.Products.Select(p => p.ProductId).Distinct().ToList();
+        var products = await _productRepository.GetByIdsAsync(productIds, cancellationToken);
+        
         var cart = _mapper.Map<Cart>(command);
+
+        foreach (var cartProduct in cart.Products)
+        {
+            var product = products.FirstOrDefault(p => p.Id == cartProduct.ProductId) ?? throw new ValidationException($"Product {cartProduct.ProductId} not found");
+            cartProduct.UpdateProductInfo(product);
+        }
+
         _cartRules.ValidatePurchase(cart.Products.ToList());
 
         var createdCart = await _cartRepository.CreateAsync(cart, cancellationToken);

@@ -37,4 +37,11 @@ public interface IProductRepository : IBaseRepository<Product>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Products by category</returns>
     Task<PaginatedList<Product>> GetPaginatedByCategoryAsync(string category, int pageNumber, int pageSize, string orderBy, Dictionary<string, string> filters, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Retrieves products by ids
+    /// </summary>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Products by ids</returns>
+    Task<List<Product>> GetByIdsAsync(IEnumerable<Guid> productIds, CancellationToken cancellationToken);
 }

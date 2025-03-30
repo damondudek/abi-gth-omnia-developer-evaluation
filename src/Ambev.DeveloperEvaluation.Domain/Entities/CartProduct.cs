@@ -40,5 +40,11 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities
         /// Gets or sets the discount of the product in the cart.
         /// </summary>
         public decimal Discount { get; set; }
+
+        public void UpdateProductInfo(Product product)
+        {
+            ProductTitle = product.Title;
+            Price = product.Price;
+        }
     }
 }

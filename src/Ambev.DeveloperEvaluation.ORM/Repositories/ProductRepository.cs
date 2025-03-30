@@ -50,11 +50,21 @@ public class ProductRepository : BaseRepository<Product, DefaultContext>, IProdu
     public Task<PaginatedList<Product>> GetPaginatedByCategoryAsync(string category, int pageNumber, int pageSize, string orderBy, Dictionary<string, string> filters, CancellationToken cancellationToken = default)
     {
         var query = _context.Products.AsNoTracking()
-            .Where(x => x.Category == category)
+            .Where(p => p.Category == category)
             .AsQueryable();
 
         var pagedList = query.ToPagedListAsync(pageNumber, pageSize, orderBy, filters, cancellationToken);
 
         return pagedList;
+    }
+
+    public Task<List<Product>> GetByIdsAsync(IEnumerable<Guid> productIds, CancellationToken cancellationToken)
+    {
+        var query = _context.Products
+            .Where(p => productIds.Contains(p.Id))
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
+
+        return query;
     }
 }
