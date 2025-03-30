@@ -6,99 +6,118 @@ using Ambev.DeveloperEvaluation.Domain.Validation;
 
 namespace Ambev.DeveloperEvaluation.Domain.Entities;
 
-
 /// <summary>
-/// Represents a user in the system with authentication and profile information.
-/// This entity follows domain-driven design principles and includes business rules validation.
+/// Represents a user entity in the system with authentication, profile, and business logic validation.
+/// This entity follows domain-driven design principles.
 /// </summary>
 public class User : BaseEntity, IUser
 {
-    public ICollection<Cart> Carts { get; set; } = [];
+    /// <summary>
+    /// Gets or sets the collection of carts associated with the user.
+    /// </summary>
+    public ICollection<Cart> Carts { get; set; } = Array.Empty<Cart>();
 
     /// <summary>
-    /// Gets the user's username.
-    /// Must not be null or empty and should contain the username for login.
+    /// Gets or sets the user's username for login purposes.
+    /// Must not be null or empty.
     /// </summary>
     public string Username { get; set; } = string.Empty;
 
     /// <summary>
-    /// Gets the user's first name.
-    /// Must not be null or empty and should contain first name.
+    /// Gets or sets the user's first name.
+    /// Must not be null or empty.
     /// </summary>
     public string FirstName { get; set; } = string.Empty;
 
     /// <summary>
-    /// Gets the user's last name.
-    /// Must not be null or empty and should contain last name.
+    /// Gets or sets the user's last name.
+    /// Must not be null or empty.
     /// </summary>
     public string LastName { get; set; } = string.Empty;
 
     /// <summary>
-    /// Gets the user's email address.
-    /// Must be a valid email format and is used as a unique identifier for authentication.
+    /// Gets or sets the user's email address.
+    /// Must be a valid email format and serves as a unique identifier for authentication.
     /// </summary>
     public string Email { get; set; } = string.Empty;
 
     /// <summary>
-    /// Gets the user's phone number.
-    /// Must be a valid phone number format following the pattern (XX) XXXXX-XXXX.
+    /// Gets or sets the user's phone number in the format (XX) XXXXX-XXXX.
     /// </summary>
     public string Phone { get; set; } = string.Empty;
 
     /// <summary>
-    /// Gets the hashed password for authentication.
-    /// Password must meet security requirements: minimum 8 characters, at least one uppercase letter,
+    /// Gets or sets the hashed password for authentication.
+    /// Must meet security requirements: minimum 8 characters, one uppercase letter, 
     /// one lowercase letter, one number, and one special character.
     /// </summary>
     public string Password { get; set; } = string.Empty;
 
     /// <summary>
-    /// Gets the user's role in the system.
-    /// Determines the user's permissions and access levels.
+    /// Gets or sets the user's role in the system.
+    /// Defines permissions and access levels.
     /// </summary>
     public UserRole Role { get; set; }
 
     /// <summary>
-    /// Gets the user's current status.
-    /// Indicates whether the user is active, inactive, or blocked in the system.
+    /// Gets or sets the user's current account status.
+    /// Indicates whether the user is active, inactive, or suspended.
     /// </summary>
     public UserStatus Status { get; set; }
 
     /// <summary>
-    /// Gets the unique identifier of the user.
+    /// Gets or sets the city of the user's address.
     /// </summary>
-    /// <returns>The user's ID as a string.</returns>
+    public string AddressCity { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets or sets the street name of the user's address.
+    /// </summary>
+    public string AddressStreet { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets or sets the house or building number of the user's address.
+    /// </summary>
+    public string AddressNumber { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets or sets the zip code of the user's address.
+    /// </summary>
+    public string AddressZipCode { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets or sets the latitude coordinate of the user's address.
+    /// </summary>
+    public decimal AddressLat { get; set; }
+
+    /// <summary>
+    /// Gets or sets the longitude coordinate of the user's address.
+    /// </summary>
+    public decimal AddressLong { get; set; }
+
+    /// <summary>
+    /// Gets the user's unique identifier as a string.
+    /// </summary>
     string IUser.Id => Id.ToString();
 
     /// <summary>
-    /// Gets the username.
+    /// Gets the username of the user.
     /// </summary>
-    /// <returns>The username.</returns>
     string IUser.Username => Username;
 
     /// <summary>
-    /// Gets the user's role in the system.
+    /// Gets the user's role in the system as a string.
     /// </summary>
-    /// <returns>The user's role as a string.</returns>
     string IUser.Role => Role.ToString();
 
     /// <summary>
-    /// Performs validation of the user entity using the UserValidator rules.
+    /// Validates the user entity using predefined rules.
     /// </summary>
     /// <returns>
-    /// A <see cref="ValidationResultDetail"/> containing:
-    /// - IsValid: Indicates whether all validation rules passed
-    /// - Errors: Collection of validation errors if any rules failed
+    /// A <see cref="ValidationResultDetail"/> containing the validation outcome:
+    /// - <c>IsValid</c>: Indicates whether all rules passed.
+    /// - <c>Errors</c>: Contains validation errors if any rules failed.
     /// </returns>
-    /// <remarks>
-    /// <listheader>The validation includes checking:</listheader>
-    /// <list type="bullet">Username format and length</list>
-    /// <list type="bullet">Email format</list>
-    /// <list type="bullet">Phone number format</list>
-    /// <list type="bullet">Password complexity requirements</list>
-    /// <list type="bullet">Role validity</list>
-    /// 
-    /// </remarks>
     public ValidationResultDetail Validate()
     {
         var validator = new UserValidator();
@@ -111,8 +130,8 @@ public class User : BaseEntity, IUser
     }
 
     /// <summary>
-    /// Activates the user account.
-    /// Changes the user's status to Active.
+    /// Activates the user account by changing the status to Active.
+    /// Updates the <see cref="UpdatedAt"/> field to the current UTC time.
     /// </summary>
     public void Activate()
     {
@@ -121,8 +140,8 @@ public class User : BaseEntity, IUser
     }
 
     /// <summary>
-    /// Deactivates the user account.
-    /// Changes the user's status to Inactive.
+    /// Deactivates the user account by changing the status to Inactive.
+    /// Updates the <see cref="UpdatedAt"/> field to the current UTC time.
     /// </summary>
     public void Deactivate()
     {
@@ -131,8 +150,8 @@ public class User : BaseEntity, IUser
     }
 
     /// <summary>
-    /// Blocks the user account.
-    /// Changes the user's status to Blocked.
+    /// Suspends the user account by changing the status to Suspended.
+    /// Updates the <see cref="UpdatedAt"/> field to the current UTC time.
     /// </summary>
     public void Suspend()
     {

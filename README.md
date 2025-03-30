@@ -2,13 +2,13 @@
 project created from a template
 
 ## to run
-from web-api project, run migrations using these commands
+from Ambev.DeveloperEvaluation.ORM project, create and run migrations using these commands
 
-if you need to change any entity, run this code to create a new migration
-> dotnet ef migrations add NewMigration --project ../Ambev.DeveloperEvaluation.ORM
+if you need to create a new migration, run the code bellow
+> dotnet ef migrations add MigrationName
 
 to update database
-> dotnet ef database update --project ../Ambev.DeveloperEvaluation.ORM
+> dotnet ef database update
 
 ## doubts
  * the documentation says that we need to do the authentication by username, not by email

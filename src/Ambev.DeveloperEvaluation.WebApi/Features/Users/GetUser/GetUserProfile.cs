@@ -17,6 +17,9 @@ public class GetUserProfile : Profile
         CreateMap<Guid, GetUserCommand>()
             .ConstructUsing(id => new GetUserCommand(id));
         CreateMap<GetUserResult, GetUserResponse>();
+        CreateMap<GetUserNameResult, GetUserNameResponse>();
+        CreateMap<GetUserAddressResult, GetUserAddressResponse>();
+        CreateMap<GetUserAddressGeolocationResult, GetUserAddressGeolocationResponse>();
         CreateMap<PaginatedResponse<GetUserResult>, PaginatedResponse<GetUserResponse>>();
     }
 }
