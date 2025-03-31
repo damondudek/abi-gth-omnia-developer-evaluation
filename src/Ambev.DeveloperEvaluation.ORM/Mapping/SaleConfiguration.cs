@@ -13,12 +13,18 @@ namespace Ambev.DeveloperEvaluation.ORM.Mapping
             builder.HasKey(s => s.Id);
             builder.Property(s => s.SaleNumber).IsRequired().HasMaxLength(50);
             builder.Property(s => s.SaleDate).IsRequired();
-            builder.Property(s => s.CustomerId).IsRequired();
-            builder.Property(s => s.CustomerName).IsRequired().HasMaxLength(100);
-            builder.Property(s => s.BranchId).IsRequired();
-            builder.Property(s => s.BranchName).IsRequired().HasMaxLength(100);
             builder.Property(s => s.TotalAmount).IsRequired().HasColumnType("decimal(18,2)");
             builder.Property(s => s.IsCancelled).IsRequired();
+
+            builder.HasOne(s => s.Customer)
+                .WithMany()
+                .HasForeignKey(s => s.CustomerId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(s => s.Branch)
+                .WithMany()
+                .HasForeignKey(s => s.BranchId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasMany(s => s.Items)
                 .WithOne()

@@ -23,6 +23,7 @@ public class Sale : BaseEntity
     /// Gets the unique identifier of the customer who made the purchase.
     /// </summary>
     public Guid CustomerId { get; private set; }
+    public Customer Customer { get; set; }
 
     /// <summary>
     /// Gets the name of the customer who made the purchase.
@@ -33,6 +34,7 @@ public class Sale : BaseEntity
     /// Gets the unique identifier of the customer who made the purchase.
     /// </summary>
     public Guid BranchId { get; private set; }
+    public Branch Branch { get; set; }
 
     /// <summary>
     /// Gets the name of the branch where the sale occurred.

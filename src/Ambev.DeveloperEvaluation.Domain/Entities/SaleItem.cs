@@ -12,12 +12,14 @@ public class SaleItem : BaseEntity
     /// Gets the unique identifier of the sale that this item belongs to.
     /// </summary>
     public Guid SaleId { get; private set; }
+    public Sale Sale { get; private set; }
 
     /// <summary>
     /// Gets the unique identifier of the product associated with this sale item.
     /// This acts as an external identity referencing the Product domain.
     /// </summary>
     public Guid ProductId { get; private set; }
+    public Product Product { get; private set; }
 
     /// <summary>
     /// Gets the name of the product associated with this sale item.
