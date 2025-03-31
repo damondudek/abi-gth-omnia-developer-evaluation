@@ -1,4 +1,4 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Consts.Errors;
+﻿using Ambev.DeveloperEvaluation.Domain.Const;
 using Ambev.DeveloperEvaluation.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;

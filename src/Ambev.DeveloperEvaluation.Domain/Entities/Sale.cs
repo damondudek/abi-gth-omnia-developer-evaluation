@@ -11,87 +11,57 @@ public class Sale : BaseEntity
     /// <summary>
     /// Gets the unique sale number that identifies the sale.
     /// </summary>
-    public string SaleNumber { get; private set; }
+    public string SaleNumber { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets the date and time when the sale was made.
     /// </summary>
-    public DateTime SaleDate { get; private set; }
+    public DateTime SaleDate { get; set; }
 
     /// <summary>
     /// Gets the unique identifier of the customer who made the purchase.
     /// </summary>
-    public Guid CustomerId { get; private set; }
-    public Customer Customer { get; set; }
+    public Guid CustomerId { get; set; }
+    public Customer? Customer { get; set; }
 
     /// <summary>
     /// Gets the name of the customer who made the purchase.
     /// </summary>
-    public string CustomerName { get; private set; }
+    public string CustomerName { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets the unique identifier of the customer who made the purchase.
     /// </summary>
-    public Guid BranchId { get; private set; }
-    public Branch Branch { get; set; }
+    public Guid BranchId { get; set; }
+    public Branch? Branch { get; set; }
 
     /// <summary>
     /// Gets the name of the branch where the sale occurred.
     /// </summary>
-    public string BranchName { get; private set; }
+    public string BranchName { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets the total amount for the sale, summing up the amounts of all non-cancelled items.
     /// </summary>
-    public decimal TotalAmount { get; private set; }
+    public decimal TotalAmount { get; set; }
 
     /// <summary>
     /// Gets a value indicating whether the sale is cancelled.
     /// </summary>
-    public bool IsCancelled { get; private set; }
+    public bool IsCancelled { get; set; }
 
     /// <summary>
     /// Gets the list of items associated with the sale.
     /// </summary>
     public IReadOnlyCollection<SaleItem> Items => _items.AsReadOnly();
-    private readonly List<SaleItem> _items = new List<SaleItem>();
+    private readonly List<SaleItem> _items = [];
 
     /// <summary>
     /// Gets the list of domain events associated with the sale.
     /// Used to track significant state changes.
     /// </summary>
     public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
-    private readonly List<IDomainEvent> _domainEvents = new List<IDomainEvent>();
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Sale"/> class with the provided details.
-    /// </summary>
-    /// <param name="saleNumber">The unique sale number.</param>
-    /// <param name="customerId">The unique identifier of the customer.</param>
-    /// <param name="customerName">The name of the customer.</param>
-    /// <param name="branchId">The unique identifier of the branch.</param>
-    /// <param name="branchName">The name of the branch.</param>
-    /// <param name="items">The collection of items included in the sale.</param>
-    public Sale(
-        string saleNumber,
-        Guid customerId,
-        string customerName,
-        Guid branchId,
-        string branchName,
-        IEnumerable<SaleItem> items)
-    {
-        SaleNumber = saleNumber;
-        SaleDate = DateTime.UtcNow;
-        CustomerId = customerId;
-        CustomerName = customerName;
-        BranchId = branchId;
-        BranchName = branchName;
-
-        _items = items.ToList();
-        CalculateTotal();
-
-        _domainEvents.Add(new SaleCreatedEvent(this));
-    }
+    private readonly List<IDomainEvent> _domainEvents = [];
 
     /// <summary>
     /// Updates the customer information for the sale.
