@@ -5,15 +5,8 @@ namespace Ambev.DeveloperEvaluation.Domain.Repositories;
 /// <summary>
 /// Repository interface for Sale entity operations
 /// </summary>
-public interface ISaleRepository : IBaseRepository<Sale>
+public interface ISaleRepository : IBaseRepository<Sale>, IBaseReadOnlyRepository<Sale>
 {
-    /// <summary>
-    /// Retrieves all sales from the repository
-    /// </summary>
-    /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>A list of sales with their items</returns>
-    Task<List<Sale>> GetAllAsync(CancellationToken cancellationToken = default);
-
     /// <summary>
     /// Retrieves sales by branch ID
     /// </summary>

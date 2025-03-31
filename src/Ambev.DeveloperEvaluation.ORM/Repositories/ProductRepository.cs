@@ -57,14 +57,4 @@ public class ProductRepository : BaseRepository<Product, DefaultContext>, IProdu
 
         return pagedList;
     }
-
-    public Task<List<Product>> GetByIdsAsync(IEnumerable<Guid> productIds, CancellationToken cancellationToken)
-    {
-        var query = _context.Products
-            .Where(p => productIds.Contains(p.Id))
-            .AsNoTracking()
-            .ToListAsync(cancellationToken);
-
-        return query;
-    }
 }

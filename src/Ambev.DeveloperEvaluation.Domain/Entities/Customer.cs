@@ -1,6 +1,4 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Common;
-
-namespace Ambev.DeveloperEvaluation.Domain.Entities;
+﻿namespace Ambev.DeveloperEvaluation.Domain.Entities;
 
 /// <summary>
 /// Represents a customer in the system, including their personal details such as first and last name.

@@ -14,12 +14,6 @@ public class CartProductRepository : BaseRepository<CartProduct, DefaultContext>
     }
 
     /// <summary>
-    /// Retrieves all cart products from the database
-    /// </summary>
-    public Task<List<CartProduct>> GetAllAsync(CancellationToken cancellationToken = default)
-        => _context.CartProducts.AsNoTracking().ToListAsync(cancellationToken);
-
-    /// <summary>
     /// Retrieves cart products by the cart ID
     /// </summary>
     public Task<List<CartProduct>> GetByCartIdAsync(Guid cartId, CancellationToken cancellationToken = default)

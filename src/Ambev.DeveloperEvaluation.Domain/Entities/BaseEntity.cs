@@ -1,6 +1,6 @@
 ﻿using Ambev.DeveloperEvaluation.Common.Validation;
 
-namespace Ambev.DeveloperEvaluation.Domain.Common;
+namespace Ambev.DeveloperEvaluation.Domain.Entities;
 
 public class BaseEntity : IComparable<BaseEntity>
 {

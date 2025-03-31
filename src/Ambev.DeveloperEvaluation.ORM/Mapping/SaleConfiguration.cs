@@ -2,34 +2,33 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
 
-namespace Ambev.DeveloperEvaluation.ORM.Mapping
+namespace Ambev.DeveloperEvaluation.ORM.Mapping;
+
+public class SaleConfiguration : IEntityTypeConfiguration<Sale>
 {
-    public class SaleConfiguration : IEntityTypeConfiguration<Sale>
+    public void Configure(EntityTypeBuilder<Sale> builder)
     {
-        public void Configure(EntityTypeBuilder<Sale> builder)
-        {
-            builder.ToTable("Sales");
+        builder.ToTable("Sales");
 
-            builder.HasKey(s => s.Id);
-            builder.Property(s => s.SaleNumber).IsRequired().HasMaxLength(50);
-            builder.Property(s => s.SaleDate).IsRequired();
-            builder.Property(s => s.TotalAmount).IsRequired().HasColumnType("decimal(18,2)");
-            builder.Property(s => s.IsCancelled).IsRequired();
+        builder.HasKey(s => s.Id);
+        builder.Property(s => s.SaleNumber).IsRequired().HasMaxLength(50);
+        builder.Property(s => s.SaleDate).IsRequired();
+        builder.Property(s => s.TotalAmount).IsRequired().HasColumnType("decimal(18,2)");
+        builder.Property(s => s.IsCancelled).IsRequired();
 
-            builder.HasOne(s => s.Customer)
-                .WithMany()
-                .HasForeignKey(s => s.CustomerId)
-                .OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(s => s.Customer)
+            .WithMany()
+            .HasForeignKey(s => s.CustomerId)
+            .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasOne(s => s.Branch)
-                .WithMany()
-                .HasForeignKey(s => s.BranchId)
-                .OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(s => s.Branch)
+            .WithMany()
+            .HasForeignKey(s => s.BranchId)
+            .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasMany(s => s.Items)
-                .WithOne()
-                .HasForeignKey("SaleId")
-                .OnDelete(DeleteBehavior.Cascade);
-        }
+        builder.HasMany(s => s.Items)
+            .WithOne()
+            .HasForeignKey("SaleId")
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

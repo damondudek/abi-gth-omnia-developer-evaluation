@@ -15,12 +15,6 @@ public class UserRepository : BaseRepository<User, DefaultContext>, IUserReposit
     {
     }
 
-    /// <summary>
-    /// Retrieves all entities from the database
-    /// </summary>
-    public Task<List<User>> GetAllAsync(CancellationToken cancellationToken = default)
-        => _context.Users.AsNoTracking().ToListAsync(cancellationToken);
-
     public Task<PaginatedList<User>> GetPaginatedAsync(int pageNumber, int pageSize, string orderBy, Dictionary<string, string> filters, CancellationToken cancellationToken = default)
     {
         var query = _context.Users.AsNoTracking().AsQueryable();

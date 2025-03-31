@@ -1,4 +1,4 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Common;
+﻿using Ambev.DeveloperEvaluation.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Ambev.DeveloperEvaluation.ORM.Repositories;
@@ -68,6 +68,10 @@ public class BaseRepository<TEntity, TContext> where TEntity : class where TCont
     /// </summary>
     public virtual Task<TEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
         => _dbSet.AsNoTracking().FirstOrDefaultAsync(entity => EF.Property<Guid>(entity, "Id") == id, cancellationToken);
+
+
+    public virtual Task<List<TEntity>> GetByIdsAsync(IEnumerable<Guid> ids, CancellationToken cancellationToken)
+        => _dbSet.AsNoTracking().Where(p => ids.Contains(EF.Property<Guid>(p, "Id"))).ToListAsync(cancellationToken);
 
     /// <summary>
     /// Deletes an entity from the database

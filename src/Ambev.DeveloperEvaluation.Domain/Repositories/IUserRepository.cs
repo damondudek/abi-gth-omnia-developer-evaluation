@@ -6,15 +6,8 @@ namespace Ambev.DeveloperEvaluation.Domain.Repositories;
 /// <summary>
 /// Repository interface for User entity operations
 /// </summary>
-public interface IUserRepository : IBaseRepository<User>
+public interface IUserRepository : IBaseRepository<User>, IBaseReadOnlyRepository<User>
 {
-    /// <summary>
-    /// Retrieve all entities from the repository
-    /// </summary>
-    /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>A list of entities</returns>
-    Task<List<User>> GetAllAsync(CancellationToken cancellationToken = default);
-
     /// <summary>
     /// Retrieves users
     /// </summary>

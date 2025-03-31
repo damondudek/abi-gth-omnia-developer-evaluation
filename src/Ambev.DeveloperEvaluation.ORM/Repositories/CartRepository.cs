@@ -46,12 +46,6 @@ public class CartRepository : BaseRepository<Cart, DefaultContext>, ICartReposit
         return cart;
     }
 
-    /// <summary>
-    /// Retrieves all carts from the database
-    /// </summary>
-    public Task<List<Cart>> GetAllAsync(CancellationToken cancellationToken = default)
-        => _context.Carts.AsNoTracking().Include(c => c.Products).ToListAsync(cancellationToken);
-
     public Task<PaginatedList<Cart>> GetPaginatedAsync(int pageNumber, int pageSize, string orderBy, Dictionary<string, string> filters, CancellationToken cancellationToken = default)
     {
         var query = _context.Carts.AsNoTracking().Include(c => c.Products).AsQueryable();

@@ -23,14 +23,6 @@ public interface IBaseRepository<TEntity> where TEntity : class
     Task<TEntity> UpdateAsync(TEntity entity, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Retrieve an entity by its unique identifier
-    /// </summary>
-    /// <param name="id">The unique identifier of the entity</param>
-    /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>The entity if found, null otherwise</returns>
-    Task<TEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
-
-    /// <summary>
     /// Delete an entity from the repository
     /// </summary>
     /// <param name="id">The unique identifier of the entity to delete</param>

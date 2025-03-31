@@ -14,15 +14,6 @@ public class SaleRepository : BaseRepository<Sale, DefaultContext>, ISaleReposit
     }
 
     /// <summary>
-    /// Retrieves all sales from the database
-    /// </summary>
-    public Task<List<Sale>> GetAllAsync(CancellationToken cancellationToken = default)
-        => _context.Sales
-            .AsNoTracking()
-            .Include(s => s.Items)
-            .ToListAsync(cancellationToken);
-
-    /// <summary>
     /// Retrieves sales by branch ID
     /// </summary>
     public Task<List<Sale>> GetByBranchIdAsync(Guid branchId, CancellationToken cancellationToken = default)

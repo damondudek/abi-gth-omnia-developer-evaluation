@@ -1,6 +1,4 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Common;
-
-namespace Ambev.DeveloperEvaluation.Domain.Entities;
+﻿namespace Ambev.DeveloperEvaluation.Domain.Entities;
 
 /// <summary>
 /// Represents an item in a sale, including product details, pricing, and cancellation status.

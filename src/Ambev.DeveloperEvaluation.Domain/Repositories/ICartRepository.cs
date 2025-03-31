@@ -6,15 +6,8 @@ namespace Ambev.DeveloperEvaluation.Domain.Repositories;
 /// <summary>
 /// Repository interface for Cart entity operations
 /// </summary>
-public interface ICartRepository : IBaseRepository<Cart>
+public interface ICartRepository : IBaseRepository<Cart>, IBaseReadOnlyRepository<Cart>
 {
-    /// <summary>
-    /// Retrieve all carts from the repository
-    /// </summary>
-    /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>A list of carts</returns>
-    Task<List<Cart>> GetAllAsync(CancellationToken cancellationToken = default);
-
     /// <summary>
     /// Retrieves paginated carts
     /// </summary>

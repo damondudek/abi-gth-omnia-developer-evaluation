@@ -1,4 +1,4 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Consts.Errors;
+﻿using Ambev.DeveloperEvaluation.Domain.Const;
 using Ambev.DeveloperEvaluation.Domain.Models;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Middleware;

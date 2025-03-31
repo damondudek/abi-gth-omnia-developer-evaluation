@@ -15,5 +15,5 @@ public class ApiErrorResponse<T>
 
     public string Type { get; set; } = string.Empty;
     public string Error { get; set; } = string.Empty;
-    public T Details { get; set; }
+    public T? Details { get; set; }
 }
