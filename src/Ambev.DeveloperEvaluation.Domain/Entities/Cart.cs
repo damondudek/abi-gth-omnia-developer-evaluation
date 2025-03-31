@@ -1,4 +1,6 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Common;
+﻿using Ambev.DeveloperEvaluation.Common.Validation;
+using Ambev.DeveloperEvaluation.Domain.Common;
+using Ambev.DeveloperEvaluation.Domain.Validation;
 
 namespace Ambev.DeveloperEvaluation.Domain.Entities;
 
@@ -43,14 +45,14 @@ public class Cart : BaseEntity
     /// <list type="bullet">Product list consistency</list>
     /// <list type="bullet">Cart creation/modification date validity</list>
     /// </remarks>
-    // public ValidationResultDetail Validate()
-    // {
-    //     var validator = new CartValidator();
-    //     var result = validator.Validate(this);
-    //     return new ValidationResultDetail
-    //     {
-    //         IsValid = result.IsValid,
-    //         Errors = result.Errors.Select(error => (ValidationErrorDetail)error)
-    //     };
-    // }
+    public ValidationResultDetail Validate()
+    {
+        var validator = new CartValidator();
+        var result = validator.Validate(this);
+        return new ValidationResultDetail
+        {
+            IsValid = result.IsValid,
+            Errors = result.Errors.Select(error => (ValidationErrorDetail)error)
+        };
+    }
 }

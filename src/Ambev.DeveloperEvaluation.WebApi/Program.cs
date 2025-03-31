@@ -9,11 +9,6 @@ using Ambev.DeveloperEvaluation.WebApi.Middleware;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
-using Rebus.Config;
-using Ambev.DeveloperEvaluation.Domain.Events;
-using Rebus.Routing.TypeBased;
-using Rebus.Serialization.Json;
-using Ambev.DeveloperEvaluation.Application.Carts.UpdateCart;
 
 namespace Ambev.DeveloperEvaluation.WebApi;
 
@@ -40,20 +35,7 @@ public class Program
                     b => b.MigrationsAssembly("Ambev.DeveloperEvaluation.ORM")
                 )
             );
-
-            //var rabbitMqSettings = builder.Configuration.GetSection("RabbitMQ");
-            //var connectionString = rabbitMqSettings["ConnectionString"];
-            //var queueName = rabbitMqSettings["QueueName"];
-
-            //builder.Services.AddRebus(configure => configure
-            //    .Transport(t => t.UseRabbitMq(connectionString, queueName))
-            //    .Routing(r => r.TypeBased()
-            //        .Map<UserUpdatedEvent>("cart-update-queue"))
-            //    .Serialization(s => s.UseSystemTextJson())
-            //);
-            //builder.Services.AutoRegisterHandlersFromAssemblyOf<UserUpdatedEventHandler>();
-
-
+            
             builder.Services.AddJwtAuthentication(builder.Configuration);
 
             builder.RegisterDependencies();
@@ -89,6 +71,7 @@ public class Program
             app.MapControllers();
 
             app.Run();
+
         }
         catch (Exception ex)
         {

@@ -14,6 +14,7 @@ to update database
 ## doubts
  * the documentation says that we need to do the authentication by username, not by email
  * I couldn't understand what's date on cart api (if it's a data of creation, we need to left it on system domain)
+ * I got confused. The documentation says to create apis (auth, carts, products and users), but in the first page, it says to create an sales api
 
 
 [postman documentation](https://documenter.getpostman.com/view/27971159/2sB2cPkR3g)
