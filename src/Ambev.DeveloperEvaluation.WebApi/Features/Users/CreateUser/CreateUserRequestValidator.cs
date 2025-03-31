@@ -69,11 +69,9 @@ public class CreateUserRequestValidator : AbstractValidator<CreateUserRequest>
                     .NotEmpty().WithMessage("Street is required.")
                     .Length(1, 100).WithMessage("Street name must be between 1 and 100 characters.");
                 address.RuleFor(a => a.Number)
-                    .NotEmpty().WithMessage("Number is required.")
-                    .Matches(@"^\d+[a-zA-Z]?$").WithMessage("Number must be numeric and may contain an optional suffix.");
+                    .NotEmpty().WithMessage("Number is required.");
                 address.RuleFor(a => a.ZipCode)
-                    .NotEmpty().WithMessage("Zip code is required.")
-                    .Matches(@"^\d{8}$").WithMessage("The zip code format is not valid.");
+                    .NotEmpty().WithMessage("Zip code is required.");
                 address.RuleFor(a => a.Geolocation)
                     .NotNull().WithMessage("Geolocation must be provided.")
                     .ChildRules(geo =>

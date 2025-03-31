@@ -74,11 +74,9 @@ public class CreateUserCommandValidator : AbstractValidator<CreateUserCommand>
             .NotEmpty().WithMessage("Street is required.")
             .Length(1, 100).WithMessage("Street name must be between 1 and 100 characters.");
         RuleFor(user => user.Address.Number)
-            .NotEmpty().WithMessage("Number is required.")
-            .Matches(@"^\d+[a-zA-Z]?$").WithMessage("Number must be numeric and may contain an optional suffix.");
+            .NotEmpty().WithMessage("Number is required.");
         RuleFor(user => user.Address.ZipCode)
-            .NotEmpty().WithMessage("Zip code is required.")
-            .Matches(@"^\d{8}$").WithMessage("The zip code format is not valid.");
+            .NotEmpty().WithMessage("Zip code is required.");
 
         // Geolocation validation (Latitude and Longitude)
         RuleFor(user => user.Address.Geolocation.Lat)
